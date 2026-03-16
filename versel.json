@@ -1,5 +1,8 @@
 {
   "rewrites": [
-    { "source": "/track/:id", "destination": "/index.html" }
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }
