@@ -1,3 +1,9 @@
 {
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+  "version": 2,
+  "rewrites": [
+    {
+      "source": "/track/id/(.*)",
+      "destination": "/index.html"
+    }
+  ]
 }
