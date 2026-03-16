@@ -2,6 +2,10 @@
   "version": 2,
   "rewrites": [
     {
+      "source": "/track/id/:match*",
+      "destination": "/index.html"
+    },
+    {
       "source": "/(.*)",
       "destination": "/index.html"
     }
