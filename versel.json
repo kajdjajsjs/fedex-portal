@@ -1,9 +1,6 @@
 {
   "version": 2,
   "rewrites": [
-    {
-      "source": "/track/id/(.*)",
-      "destination": "/index.html"
-    }
+    { "source": "/track/(.*)", "destination": "/index.html" }
   ]
 }
